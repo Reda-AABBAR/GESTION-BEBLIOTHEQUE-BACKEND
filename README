@@ -1,0 +1,11 @@
+To run the project do following tasks :
+1- Open tour command prompt
+2- add environment variables:
+    on Windows:
+        set SPRING_DATASOURCE_PASSWORD=<YOU_DB_PASSWORD>
+        set SPRING_DATASOURCE_URL=<YOUR_HOST>:<YOUR_DB_PORT>/GESTION-BEBLIOTHEQUE
+        set SPRING_DATASOURCE_USERNAME=<TOUR_DB_USERNAME>
+3- Go the the project folder
+    cd .../GESTION-BEBIOTHEQUE-BACKEND
+4- run the command
+    mvn spring-boot:run
