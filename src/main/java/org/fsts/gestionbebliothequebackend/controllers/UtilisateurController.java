@@ -3,6 +3,7 @@ package org.fsts.gestionbebliothequebackend.controllers;
 import lombok.RequiredArgsConstructor;
 import org.fsts.gestionbebliothequebackend.dtos.UtilisateurDTO;
 import org.fsts.gestionbebliothequebackend.services.UtilisateurService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,16 +17,22 @@ import java.util.UUID;
 public class UtilisateurController {
     private final UtilisateurService service;
     @PostMapping("/save")
-    public ResponseEntity<UtilisateurDTO> saveUtilisateur(@RequestBody UtilisateurDTO utilisateur){
-        return ResponseEntity.ok(service.saveUtilisateur(utilisateur));
+    public ResponseEntity<UtilisateurDTO> saveUtilisateur(@RequestBody UtilisateurDTO utilisateur,@RequestHeader String password){
+        return ResponseEntity.ok(service.saveUtilisateur(utilisateur,password));
     }
 
     @PostMapping("/save/list")
-    public ResponseEntity<List<UtilisateurDTO>> saveAllUtilisateur(@RequestBody List<UtilisateurDTO> utilisateur){
-        return ResponseEntity.ok(service.saveAllUtilisateur(utilisateur));
+    public ResponseEntity<List<UtilisateurDTO>> saveAllUtilisateur(@RequestBody Map<String,?> request){
+        if (request == null) {
+            return new ResponseEntity(null,HttpStatus.NOT_ACCEPTABLE);
+        }
+        List<UtilisateurDTO> utilisateurs = UtilisateurDTO.convertToUtilisateurDTOList(request.get("utilisateurs"));
+        Map<String, String> passwords = (Map<String, String>) request.get("passwords");
+        return ResponseEntity.ok(service.saveAllUtilisateur(utilisateurs,passwords));
     }
 
     @GetMapping("/email/{email}")
+
     public ResponseEntity<UtilisateurDTO> getUtilisateur(@PathVariable String email){
         return ResponseEntity.ok(service.getUtilisateurByEmail(email));
     }

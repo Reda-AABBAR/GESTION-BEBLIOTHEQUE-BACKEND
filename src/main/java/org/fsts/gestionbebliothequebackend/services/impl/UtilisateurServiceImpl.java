@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -21,12 +22,13 @@ import java.util.stream.Collectors;
 public class UtilisateurServiceImpl implements UtilisateurService {
     private final UtilisateurRepository repository;
     @Override
-    public UtilisateurDTO saveUtilisateur(UtilisateurDTO dto) {
+    public UtilisateurDTO saveUtilisateur(UtilisateurDTO dto, String password) {
         if(isEmailExist(dto.email())){
             log.error("email {} est déjà exist dans la base de données",dto.email());
             throw new RuntimeException("email déjà exist dans la base de données");
         }
         Utilisateur utilisateur = UtilisateurMapper.toEntity(dto);
+        utilisateur.setPassword(password); // to be encoded
         Utilisateur save = repository.save(utilisateur);
         return UtilisateurMapper.toDto(save);
     }
@@ -55,8 +57,8 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Transactional
     @Override
-    public List<UtilisateurDTO> saveAllUtilisateur(List<UtilisateurDTO> dtos) {
-        return dtos.stream().map(this::saveUtilisateur).collect(Collectors.toList());
+    public List<UtilisateurDTO> saveAllUtilisateur(List<UtilisateurDTO> dtos, Map<String,String> passwords) {
+        return dtos.stream().map(user -> saveUtilisateur(user,passwords.get(user.email()))).collect(Collectors.toList());
     }
 
     @Override
@@ -90,7 +92,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public boolean isEmailExist(String email) {
-        return repository.countByEmail(email) == 0;
+        return repository.countByEmail(email) != 0;
     }
 
     @Override
