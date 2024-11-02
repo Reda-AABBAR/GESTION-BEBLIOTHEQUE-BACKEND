@@ -13,6 +13,7 @@ public class UtilisateurMapper {
                 .email(entity.getEmail())
                 .nom(entity.getNom())
                 .prenom(entity.getPrenom())
+                .code(entity.getCode())
                 .build();
     }
     public static Utilisateur toEntity(UtilisateurDTO entity){
@@ -20,6 +21,7 @@ public class UtilisateurMapper {
                 .id(entity.id())
                 .role(entity.role())
                 .email(entity.email())
+                .code(entity.code())
                 .nom(entity.nom())
                 .prenom(entity.prenom())
                 .build();

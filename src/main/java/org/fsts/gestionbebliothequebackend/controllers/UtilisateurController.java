@@ -254,4 +254,41 @@ public class UtilisateurController {
         return ResponseEntity.ok(service.updateBibliothecaireByEmail(email,bibliothecaire));
     }
 
+    @DeleteMapping("/list")
+    public void deleteListUtilisateur(@RequestBody Map<String,List<UUID>> ids){
+        List<UUID> listOfId= ids.get("ids");
+        if (listOfId != null && !listOfId.isEmpty()) {
+            service.deleteListUtilisateur(listOfId);
+        }
+    }
+
+    @DeleteMapping("/etudiant/list")
+    public void deleteEtudiantId(@RequestBody Map<String,List<UUID>> ids){
+        List<UUID> listOfId= ids.get("ids");
+        if (listOfId != null && !listOfId.isEmpty()) {
+            service.deleteListEtudiant(listOfId);
+        }
+    }
+    @DeleteMapping("/personnel/list")
+    public void deletePersonnelId(@RequestBody Map<String,List<UUID>> ids){
+        List<UUID> listOfId= ids.get("ids");
+        if (listOfId != null && !listOfId.isEmpty()) {
+            service.deleteListPersonnel(listOfId);
+        }
+    }
+    @DeleteMapping("/bibliothecaire/list")
+    public void deleteBibliothecaireId(@RequestBody Map<String,List<UUID>> ids){
+        List<UUID> listOfId= ids.get("ids");
+        if (listOfId != null && !listOfId.isEmpty()) {
+            service.deleteListBibliothecaire(listOfId);
+        }
+    }
+    @DeleteMapping("/admin/list")
+    public void deleteAdminId(@RequestBody Map<String,List<UUID>> ids){
+        List<UUID> listOfId= ids.get("ids");
+        if (listOfId != null && !listOfId.isEmpty()) {
+            service.deleteListAdmin(listOfId);
+        }
+    }
+
 }

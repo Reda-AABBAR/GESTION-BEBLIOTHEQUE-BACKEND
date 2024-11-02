@@ -25,5 +25,6 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur,UUID> {
     List<Utilisateur> findByRole(UtilisateurRole role);
 
     int countByRole(UtilisateurRole role);
-
+    @Query("SELECT COUNT(u) FROM Utilisateur as u WHERE u.code = :code")
+    int countByCode(@Param("code") String code);
 }

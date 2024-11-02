@@ -73,4 +73,9 @@ public interface UtilisateurService {
     int numberResponsables();
     int numberBibliothecaire();
 
+    void deleteListUtilisateur(List<UUID> listOfId);
+
+    void deleteListPersonnel(List<UUID> listOfId);
+
+    void deleteListAdmin(List<UUID> listOfId);
 }

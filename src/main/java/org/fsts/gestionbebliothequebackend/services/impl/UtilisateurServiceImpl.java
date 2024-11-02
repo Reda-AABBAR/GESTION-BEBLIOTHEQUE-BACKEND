@@ -27,6 +27,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             log.error("email {} est déjà exist dans la base de données",dto.email());
             throw new RuntimeException("email déjà exist dans la base de données");
         }
+        if(iscodeExist(dto.code())){
+            log.error("code {} est déjà exist dans la base de données",dto.code());
+            throw new RuntimeException("le code déjà exist dans la base de données");
+        }
         Utilisateur utilisateur = UtilisateurMapper.toEntity(dto);
         utilisateur.setPassword(password); // to be encoded
         Utilisateur save = repository.save(utilisateur);
@@ -50,6 +54,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             utilisateur.setNom(dto.nom());
             utilisateur.setPrenom(dto.prenom());
             utilisateur.setRole(dto.role());
+            utilisateur.setCode(dto.code());
             return UtilisateurMapper.toDto(repository.save(utilisateur));
         }
         return null;
@@ -72,6 +77,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             utilisateur.setNom(dto.nom());
             utilisateur.setPrenom(dto.prenom());
             utilisateur.setRole(dto.role());
+            utilisateur.setCode(dto.code());
             return UtilisateurMapper.toDto(repository.save(utilisateur));
         }
         return null;
@@ -303,7 +309,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public Personnel updatePersonnelByEmail(String email, Personnel dto) {
-        return null;
+        UtilisateurDTO utilisateur = UtilisateurMapper.PersonnelToUtilisateurDTO(dto);
+        return UtilisateurMapper.UtilisateurToPersonnel(
+                updateUtilisateurByEmail(email,utilisateur)
+        );
     }
 
     @Override
@@ -355,6 +364,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     public boolean isEmailExist(String email) {
         return repository.countByEmail(email) != 0;
     }
+    boolean iscodeExist(String code){ return repository.countByCode(code) != 0;}
 
     @Override
     public int numberUtilisateur() {
@@ -384,5 +394,20 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     @Override
     public int numberBibliothecaire() {
         return repository.countByRole(UtilisateurRole.BIBLIOTHECAIRE);
+    }
+
+    @Override
+    public void deleteListUtilisateur(List<UUID> listOfId) {
+        listOfId.forEach(this::deleteUtilisateurId);
+    }
+
+    @Override
+    public void deleteListPersonnel(List<UUID> listOfId) {
+        listOfId.forEach(this::deleteUtilisateurId);
+    }
+
+    @Override
+    public void deleteListAdmin(List<UUID> listOfId) {
+        listOfId.forEach(this::deleteUtilisateurId);
     }
 }
