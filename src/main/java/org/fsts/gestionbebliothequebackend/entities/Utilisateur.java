@@ -24,5 +24,7 @@ public class Utilisateur {
     protected String email;
     @JsonIgnore
     protected String password;
+    @Column(unique = true)
+    protected String code;
     protected UtilisateurRole role;
 }

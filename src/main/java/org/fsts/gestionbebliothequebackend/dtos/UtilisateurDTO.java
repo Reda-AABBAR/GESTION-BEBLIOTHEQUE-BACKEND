@@ -15,6 +15,7 @@ public record UtilisateurDTO(
         UUID id,
         String nom,
         String prenom,
+        String code,
         String email,
         UtilisateurRole role
 ) {
