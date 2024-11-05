@@ -18,6 +18,8 @@ public class Document {
     private String edition;
     private String cote1;
     private String cote2;
+
+    @Column(length = 1000) // the descripteur is to much long for varchar (255)
     private String descripteurs;
 
     @Enumerated(EnumType.STRING)

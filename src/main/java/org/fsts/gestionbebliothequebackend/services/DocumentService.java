@@ -1,15 +1,11 @@
 package org.fsts.gestionbebliothequebackend.services;
 
+import org.apache.poi.ss.usermodel.*;
 import org.fsts.gestionbebliothequebackend.repositories.DocumentRepository;
 import org.fsts.gestionbebliothequebackend.entities.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
 
 import java.io.InputStream;
 import java.util.List;
@@ -55,21 +51,43 @@ public class DocumentService {
 
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // Skip header row
-
+                try {
                 Document document = new Document();
-                document.setAuteur(row.getCell(0).getStringCellValue());
+                document.setAuteur(getCellValueAsString(row.getCell(0)));
                 document.setTitre(row.getCell(1).getStringCellValue());
-                document.setSousTitre(row.getCell(2).getStringCellValue());
-                document.setEdition(row.getCell(3).getStringCellValue());
-                document.setCote1(row.getCell(4).getStringCellValue());
-                document.setCote2(row.getCell(5).getStringCellValue());
-                document.setDescripteurs(row.getCell(6).getStringCellValue());
+                document.setSousTitre(getCellValueAsString(row.getCell(2)));
+                document.setEdition(getCellValueAsString(row.getCell(3)));
+                document.setCote1(getCellValueAsString(row.getCell(4)));
+                document.setCote2(getCellValueAsString(row.getCell(5)));
+                document.setDescripteurs(getCellValueAsString(row.getCell(6)));
 
-                documentRepository.save(document);
+
+                    documentRepository.save(document);
+                } catch (Exception e) {
+                    System.out.println("Error saving document: " + e.getMessage());
+                    e.printStackTrace(); // This will print the stack trace for debugging
+                }
             }
             workbook.close();
         }
     }
+    // traiter les cases vide
+    private String getCellValueAsString(Cell cell) {
+        if (cell == null || cell.getCellType() == CellType.BLANK) {
+            return " "; // retourner espace
+        }
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                return String.valueOf(cell.getNumericCellValue());
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            default:
+                return " "; // on va stocker dans la base de donner un " " si la case est vide
+        }
+    }
+
     public void deleteDocument(Long id) {
         if (documentRepository.existsById(id)) {
             documentRepository.deleteById(id);
