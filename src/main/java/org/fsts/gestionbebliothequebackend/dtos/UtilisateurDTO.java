@@ -34,7 +34,11 @@ public record UtilisateurDTO(
                 .prenom((String) userMap.get("prenom"))
                 .nom((String) userMap.get("nom"))
                 .email((String) userMap.get("email"))
+<<<<<<< HEAD
                 .code("code")
+=======
+                .code((String) userMap.get("code"))
+>>>>>>> dev
                 .role(getUserRole((String) userMap.get("role")))
                 .build();
     }

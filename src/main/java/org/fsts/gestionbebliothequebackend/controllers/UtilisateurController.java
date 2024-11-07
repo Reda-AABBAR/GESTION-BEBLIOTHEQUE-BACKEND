@@ -15,6 +15,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/utilisateur")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class UtilisateurController {
     private final UtilisateurService service;
     @PostMapping("/save")
