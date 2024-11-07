@@ -244,7 +244,7 @@ public class UtilisateurController {
         return ResponseEntity.ok(service.updatePersonnelByEmail(email,personnel));
     }
 
-    @PutMapping("/email/admin/{id}")
+    @PutMapping("/email/admin/{email}")
     public ResponseEntity<Admin> updateAdmin(@PathVariable String email, @RequestBody Admin admin){
         return ResponseEntity.ok(service.updateAdminByEmail(email,admin));
     }

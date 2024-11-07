@@ -34,6 +34,7 @@ public record UtilisateurDTO(
                 .prenom((String) userMap.get("prenom"))
                 .nom((String) userMap.get("nom"))
                 .email((String) userMap.get("email"))
+                .code("code")
                 .role(getUserRole((String) userMap.get("role")))
                 .build();
     }
