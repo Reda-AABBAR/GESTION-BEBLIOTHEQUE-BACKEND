@@ -1,5 +1,6 @@
 package org.fsts.gestionbebliothequebackend.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.fsts.gestionbebliothequebackend.entities.Document;
 import org.fsts.gestionbebliothequebackend.services.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,21 +19,38 @@ public class DocumentController {
     @Autowired
     private DocumentService documentService;
 
-    // Endpoint to create a new document from JSON (POST)
-    @PostMapping(consumes = "application/json")
-    public ResponseEntity<Document> createDocumentFromJson(@RequestBody Document document) {
-        Document savedDocument = documentService.saveDocument(document);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedDocument);
+    // saving one document from i json data
+    @PostMapping("/save")
+    public ResponseEntity<Document> saveDocument(@RequestBody JsonNode json) {
+        try {
+            Document savedDocument = documentService.saveDocumentFromJson(json);
+            return ResponseEntity.ok(savedDocument);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+    // saving lot of documents from a json data that have a lot of documents
+    @PostMapping("/saveAll")
+    public ResponseEntity<List<Document>> saveDocuments(@RequestBody JsonNode jsonArray) {
+        try {
+            List<Document> savedDocuments = documentService.saveDocumentsFromJsonArray(jsonArray);
+            return ResponseEntity.ok(savedDocuments);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
-    // Endpoint to create multiple documents from an Excel file (POST)
-    @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<String> createDocumentsFromExcel(@RequestParam("file") MultipartFile file) {
+
+    //PUT /documents/changeStatus/1?newStatut=NOT_EXIST
+    @PutMapping("/changeStatus/{id}")
+    public ResponseEntity<Document> changeDocumentStatus(
+            @PathVariable Long id,
+            @RequestParam Document.Statut newStatut) {
         try {
-            documentService.saveFromExcel(file);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Documents added successfully from Excel file.");
+            Document updatedDocument = documentService.changeDocumentStatus(id, newStatut);
+            return ResponseEntity.ok(updatedDocument);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing Excel file: " + e.getMessage());
+            return ResponseEntity.badRequest().body(null);
         }
     }
 
@@ -42,14 +60,36 @@ public class DocumentController {
         return documentService.findAllDocuments();
     }
 
-    // Endpoint to delete a document by ID (DELETE)
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteDocument(@PathVariable Long id) {
+    // modifier un document
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Document> updateDocument(@PathVariable Long id, @RequestBody JsonNode json) {
         try {
-            documentService.deleteDocument(id);
-            return ResponseEntity.status(HttpStatus.OK).body("Document deleted successfully.");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            Document updatedDocument = documentService.updateDocument(id, json);
+            return ResponseEntity.ok(updatedDocument);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
         }
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteDocument(@PathVariable Long id) {
+        try {
+            documentService.deleteDocument(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    //*********************************************************************************************************************
+    // saving from an exel but it doesn t work for now
+   /* @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<String> createDocumentsFromExcel(@RequestParam("file") MultipartFile file) {
+        try {
+            documentService.saveFromExcel(file);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Documents added successfully from Excel file.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error processing Excel file: " + e.getMessage());
+        }
+    }*/
 }
