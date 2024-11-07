@@ -1,13 +1,16 @@
 package org.fsts.gestionbebliothequebackend.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.poi.ss.usermodel.*;
 import org.fsts.gestionbebliothequebackend.repositories.DocumentRepository;
 import org.fsts.gestionbebliothequebackend.entities.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,22 +32,8 @@ public class DocumentService {
         return documentRepository.save(document);
     }
 
-    public Document updateDocument(Long id, Document newDocument) {
-        return documentRepository.findById(id).map(document -> {
-            document.setAuteur(newDocument.getAuteur());
-            document.setTitre(newDocument.getTitre());
-            document.setSousTitre(newDocument.getSousTitre());
-            document.setEdition(newDocument.getEdition());
-            document.setCote1(newDocument.getCote1());
-            document.setCote2(newDocument.getCote2());
-            document.setDescripteurs(newDocument.getDescripteurs());
-            return documentRepository.save(document);
-        }).orElseGet(() -> {
-            newDocument.setId(id);
-            return documentRepository.save(newDocument);
-        });
-    }
-    public void saveFromExcel(MultipartFile file) throws Exception {
+
+ /*   public void saveFromExcel(MultipartFile file) throws Exception {
         try (InputStream is = file.getInputStream()) {
             Workbook workbook = WorkbookFactory.create(is);
             Sheet sheet = workbook.getSheetAt(0);
@@ -70,8 +59,8 @@ public class DocumentService {
             }
             workbook.close();
         }
-    }
-    // traiter les cases vide
+    }*/
+// ell ne fonctionne pas pour l instant
     private String getCellValueAsString(Cell cell) {
         if (cell == null || cell.getCellType() == CellType.BLANK) {
             return " "; // retourner espace
@@ -88,11 +77,85 @@ public class DocumentService {
         }
     }
 
-    public void deleteDocument(Long id) {
-        if (documentRepository.existsById(id)) {
-            documentRepository.deleteById(id);
-        } else {
-            throw new IllegalArgumentException("Document with ID " + id + " not found.");
+    @Transactional
+    public Document saveDocumentFromJson(JsonNode json) throws Exception {
+        Document document = new Document();
+
+        // Parse fields from JSON
+        document.setTitre(json.get("titre").asText());
+        document.setSousTitre(json.get("sousTitre").asText());
+        document.setEdition(json.get("edition").asText());
+        document.setCote1(json.get("cote1").asText());
+        document.setCote2(json.get("cote2").asText());
+        document.setStatut(Document.Statut.valueOf(json.get("statut").asText()));
+
+        // Parse lists for auteurs and descripteurs
+        List<String> auteurs = new ArrayList<>();
+        json.get("auteurs").forEach(auteur -> auteurs.add(auteur.asText()));
+        document.setAuteurs(auteurs);
+
+        List<String> descripteurs = new ArrayList<>();
+        json.get("descripteurs").forEach(descripteur -> descripteurs.add(descripteur.asText()));
+        document.setDescripteurs(descripteurs);
+
+        // Save document to DB
+        return documentRepository.save(document);
+    }
+
+    @Transactional
+    public List<Document> saveDocumentsFromJsonArray(JsonNode jsonArray) throws Exception {
+        List<Document> savedDocuments = new ArrayList<>();
+
+        for (JsonNode json : jsonArray) {
+            Document savedDocument = saveDocumentFromJson(json);
+            savedDocuments.add(savedDocument);
         }
+
+        return savedDocuments;
+    }
+    public Document updateDocument(Long id, JsonNode json) throws Exception {
+        Optional<Document> optionalDocument = documentRepository.findById(id);
+        if (optionalDocument.isEmpty()) {
+            throw new Exception("Document not found");
+        }
+
+        Document document = optionalDocument.get();
+
+        // Update fields from JSON
+        document.setTitre(json.get("titre").asText());
+        document.setSousTitre(json.get("sousTitre").asText());
+        document.setEdition(json.get("edition").asText());
+        document.setCote1(json.get("cote1").asText());
+        document.setCote2(json.get("cote2").asText());
+        document.setStatut(Document.Statut.valueOf(json.get("statut").asText()));
+
+        List<String> auteurs = new ArrayList<>();
+        json.get("auteurs").forEach(auteur -> auteurs.add(auteur.asText()));
+        document.setAuteurs(auteurs);
+
+        List<String> descripteurs = new ArrayList<>();
+        json.get("descripteurs").forEach(descripteur -> descripteurs.add(descripteur.asText()));
+        document.setDescripteurs(descripteurs);
+
+        // Save updated document to DB
+        return documentRepository.save(document);
+    }
+
+    public void deleteDocument(Long id) throws Exception {
+        if (!documentRepository.existsById(id)) {
+            throw new Exception("Document not found");
+        }
+        documentRepository.deleteById(id);
+    }
+    public Document changeDocumentStatus(Long id, Document.Statut newStatut) throws Exception {
+        Optional<Document> optionalDocument = documentRepository.findById(id);
+        if (optionalDocument.isEmpty()) {
+            throw new Exception("Document not found");
+        }
+
+        Document document = optionalDocument.get();
+        document.setStatut(newStatut);
+
+        return documentRepository.save(document);
     }
 }
