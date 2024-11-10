@@ -1,0 +1,14 @@
+package org.fsts.gestionbebliothequebackend.repositories;
+
+import org.fsts.gestionbebliothequebackend.entities.Document;
+import org.fsts.gestionbebliothequebackend.entities.Emprunt;
+import org.fsts.gestionbebliothequebackend.entities.Utilisateur;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Date;
+import java.util.List;
+
+public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
+    List<Emprunt> findByDocument(Document document);
+    List<Emprunt> findByUtilisateur(Utilisateur utilisateur);
+}
