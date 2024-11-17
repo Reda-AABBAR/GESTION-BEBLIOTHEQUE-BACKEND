@@ -8,6 +8,7 @@ import org.fsts.gestionbebliothequebackend.enums.UtilisateurRole;
 import org.fsts.gestionbebliothequebackend.mappers.UtilisateurMapper;
 import org.fsts.gestionbebliothequebackend.repositories.UtilisateurRepository;
 import org.fsts.gestionbebliothequebackend.services.UtilisateurService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UtilisateurServiceImpl implements UtilisateurService {
     private final UtilisateurRepository repository;
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     public UtilisateurDTO saveUtilisateur(UtilisateurDTO dto, String password) {
         if(isEmailExist(dto.email())){
@@ -32,7 +35,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             throw new RuntimeException("le code déjà exist dans la base de données");
         }
         Utilisateur utilisateur = UtilisateurMapper.toEntity(dto);
-        utilisateur.setPassword(password); // to be encoded
+        utilisateur.setPassword(passwordEncoder.encode(password));
         Utilisateur save = repository.save(utilisateur);
         return UtilisateurMapper.toDto(save);
     }
