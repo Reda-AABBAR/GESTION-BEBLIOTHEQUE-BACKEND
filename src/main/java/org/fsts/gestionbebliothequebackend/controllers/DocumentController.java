@@ -40,6 +40,10 @@ public class DocumentController {
         }
     }
 
+    @GetMapping("/{id}")
+    public Document getById(@PathVariable Long id) {
+        return documentService.findById(id).orElseThrow();
+    }
 
     //PUT /documents/changeStatus/1?newStatut=NOT_EXIST
     @PutMapping("/changeStatus/{id}")
