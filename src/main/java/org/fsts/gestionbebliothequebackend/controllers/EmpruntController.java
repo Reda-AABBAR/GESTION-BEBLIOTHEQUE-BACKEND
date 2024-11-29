@@ -61,7 +61,7 @@ public class EmpruntController {
 
     @GetMapping("/by-utilisateur/{utilisateurId}")
     public List<Emprunt> getEmpruntsByUtilisateur(@PathVariable UUID utilisateurId) {
-        Utilisateur utilisateur = new Utilisateur(); // Assuming you have a way to fetch or create Utilisateur here
+        Utilisateur utilisateur = new Utilisateur();
         utilisateur.setId(utilisateurId);
         return empruntService.getAllEmpruntsByUtilisateur(utilisateur);
     }

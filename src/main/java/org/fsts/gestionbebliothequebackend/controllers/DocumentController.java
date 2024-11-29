@@ -85,6 +85,17 @@ public class DocumentController {
         }
     }
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteDocuments(@RequestBody List<Long> ids) {
+        try {
+            documentService.deleteDocuments(ids);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
     //*********************************************************************************************************************
     // saving from an exel but it doesn t work for now
    /* @PostMapping(consumes = "multipart/form-data")

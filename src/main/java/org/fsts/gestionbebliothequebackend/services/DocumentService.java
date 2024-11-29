@@ -116,6 +116,14 @@ public class DocumentService {
         }
         documentRepository.deleteById(id);
     }
+    public void deleteDocuments(List<Long> ids) throws Exception {
+        for (Long id : ids) {
+            if (!documentRepository.existsById(id)) {
+                throw new Exception("Document with id " + id + " not found");
+            }
+        }
+        documentRepository.deleteAllById(ids);
+    }
     public Document changeDocumentStatus(Long id, Document.Statut newStatut) throws Exception {
         Optional<Document> optionalDocument = documentRepository.findById(id);
         if (optionalDocument.isEmpty()) {
