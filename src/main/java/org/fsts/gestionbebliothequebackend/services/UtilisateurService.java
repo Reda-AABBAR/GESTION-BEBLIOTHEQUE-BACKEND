@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface UtilisateurService {
+    UtilisateurDTO upDatePassword(UUID id,String newPassword);
     UtilisateurDTO saveUtilisateur(UtilisateurDTO dto,String password);
     UtilisateurDTO updateUtilisateur(UUID id, UtilisateurDTO dto);
     UtilisateurDTO updateUtilisateurByEmail(String email, UtilisateurDTO dto);
@@ -78,4 +79,6 @@ public interface UtilisateurService {
     void deleteListPersonnel(List<UUID> listOfId);
 
     void deleteListAdmin(List<UUID> listOfId);
+
+    UtilisateurDTO upDatePasswordByEmail(String email, String newPassword);
 }

@@ -250,6 +250,16 @@ public class UtilisateurController {
         return ResponseEntity.ok(service.updateAdminByEmail(email,admin));
     }
 
+    @PutMapping("/password/{id}")
+    public ResponseEntity<UtilisateurDTO> updatePassword(@PathVariable UUID id,@RequestHeader String newPassword){
+        return ResponseEntity.ok(service.upDatePassword(id,newPassword));
+    }
+
+    @PutMapping("/password/email/{email}")
+    public ResponseEntity<UtilisateurDTO> updatePasswordByEmail(@PathVariable String email,@RequestHeader String newPassword){
+        return ResponseEntity.ok(service.upDatePasswordByEmail(email,newPassword));
+    }
+
     @PutMapping("/email/bibliothecaire/{email}")
     public ResponseEntity<Bibliothecaire> updateBibliothecaire(@PathVariable String email, @RequestBody Bibliothecaire bibliothecaire){
         return ResponseEntity.ok(service.updateBibliothecaireByEmail(email,bibliothecaire));

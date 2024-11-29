@@ -32,7 +32,6 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public ReservationDTO createReservation(ReservationDTO reservationDTO) {
         Reservation reservation = reservationMapper.toEntity(reservationDTO);
-        reservation.setDateReservation(new Date());
         reservation = reservationRepository.save(reservation);
         log.info("Created reservation with ID: {}", reservation.getId());
         return reservationMapper.toDTO(reservation);

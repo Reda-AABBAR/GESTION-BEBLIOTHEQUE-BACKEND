@@ -25,6 +25,22 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    public UtilisateurDTO upDatePassword(UUID id,String newPassword) {
+        Utilisateur u = repository.findById(id).orElseThrow(
+                ()->{
+                    log.error("No user for id: {}", id);
+                    return null;
+                }
+        );
+        if(u != null){
+            u.setPassword(passwordEncoder.encode(newPassword));
+            u = repository.save(u);
+            return UtilisateurMapper.toDto(u);
+        }
+        return null;
+    }
+
+    @Override
     public UtilisateurDTO saveUtilisateur(UtilisateurDTO dto, String password) {
         if(isEmailExist(dto.email())){
             log.error("email {} est déjà exist dans la base de données",dto.email());
@@ -412,5 +428,21 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     @Override
     public void deleteListAdmin(List<UUID> listOfId) {
         listOfId.forEach(this::deleteUtilisateurId);
+    }
+
+    @Override
+    public UtilisateurDTO upDatePasswordByEmail(String email, String newPassword) {
+        Utilisateur u = repository.findByEmail(email).orElseThrow(
+                ()->{
+                    log.error("No user for email: {}", email);
+                    return null;
+                }
+        );
+        if(u != null){
+            u.setPassword(passwordEncoder.encode(newPassword));
+            u = repository.save(u);
+            return UtilisateurMapper.toDto(u);
+        }
+        return null;
     }
 }
