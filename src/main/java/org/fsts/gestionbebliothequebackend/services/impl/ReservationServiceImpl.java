@@ -95,6 +95,9 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public List<ReservationDTO> getReservationsByUser(UUID utilisateurID) {
-        return null;
+        return reservationRepository.findReservationsByUtilisateurId(utilisateurID)
+                .stream().map(
+                        reservationMapper::toDTO
+                ).toList();
     }
 }

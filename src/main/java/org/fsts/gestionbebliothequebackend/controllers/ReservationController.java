@@ -2,6 +2,7 @@ package org.fsts.gestionbebliothequebackend.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.fsts.gestionbebliothequebackend.dtos.ReservationDTO;
+import org.fsts.gestionbebliothequebackend.entities.Reservation;
 import org.fsts.gestionbebliothequebackend.services.ReservationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,12 @@ public class ReservationController {
     public ResponseEntity<ReservationDTO> getReservationById(@PathVariable UUID id) {
         ReservationDTO reservationDTO = reservationService.getReservationById(id);
         return ResponseEntity.ok(reservationDTO);
+    }
+    @GetMapping("/by-user/{id}")
+    ResponseEntity<List<ReservationDTO>> getReservationsByUser(@PathVariable UUID id){
+        return  ResponseEntity.ok(
+          reservationService.getReservationsByUser(id)
+        );
     }
 
     @GetMapping
