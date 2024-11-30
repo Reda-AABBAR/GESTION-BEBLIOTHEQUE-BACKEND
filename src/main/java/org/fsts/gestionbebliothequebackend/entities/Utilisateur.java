@@ -27,4 +27,6 @@ public class Utilisateur {
     @Column(unique = true)
     protected String code;
     protected UtilisateurRole role;
+    @OneToOne(fetch = FetchType.LAZY)
+    protected Photo photo;
 }
