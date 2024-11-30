@@ -70,5 +70,11 @@ public class PhotoServiceImpl implements PhotoService {
     public List<Photo> getListPhotosByIds(List<UUID> ids) {
         return photoRepository.findAllById(ids);
     }
+
+    @Override
+    public Photo getPhotoByUserId(UUID id) {
+        Utilisateur utilisateur = utilisateurRepository.findById(id).orElseThrow();
+        return utilisateur.getPhoto();
+    }
 }
 

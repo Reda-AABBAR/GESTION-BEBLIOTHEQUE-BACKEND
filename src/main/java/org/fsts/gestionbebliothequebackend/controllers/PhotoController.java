@@ -77,6 +77,16 @@ public class PhotoController {
         }
     }
 
+    @GetMapping("/user/{id}")
+    public ResponseEntity<String> getPhotoByUserId(@PathVariable UUID id) {
+        try {
+            Photo photo = photoService.getPhotoByUserId(id);
+            return ResponseEntity.ok(photo.getPhoto().toString());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
     /**
      * Get all photos from the database.
      *

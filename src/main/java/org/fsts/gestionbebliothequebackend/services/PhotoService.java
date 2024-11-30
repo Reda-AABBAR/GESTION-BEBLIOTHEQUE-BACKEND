@@ -15,4 +15,6 @@ public interface PhotoService {
     Photo getPhotoById(UUID id);
     List<Photo> getAllPhotos();
     List<Photo> getListPhotosByIds(List<UUID> ids);
+
+    Photo getPhotoByUserId(UUID id);
 }
