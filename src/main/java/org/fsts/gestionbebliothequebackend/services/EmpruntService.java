@@ -9,13 +9,10 @@ import org.fsts.gestionbebliothequebackend.repositories.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 //package org.fsts.gestionbebliothequebackend.services;
 
-import java.util.UUID;
 
 @Service
 public class EmpruntService {
@@ -77,6 +74,49 @@ public class EmpruntService {
     }
     public List<Emprunt> getEmpruntsRetourner() {
         return empruntRepository.findByDocumentStatut(Document.Statut.EXIST);
+    }
+
+    public List<Emprunt> getEmpruntsWithDelay() {
+
+        List<Emprunt> allEmprunts = empruntRepository.findByDocumentStatut(Document.Statut.EXIST);
+
+        List<Emprunt> overdueEmprunts = new ArrayList<>();
+
+        for (Emprunt emprunt : allEmprunts) {
+            if (emprunt.getDateRetour() != null) {
+                // calculer la date
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(emprunt.getDateRetour());
+                calendar.add(Calendar.DAY_OF_MONTH, 3); // ajouter 3 jours
+                Date dateLimite = calendar.getTime();
+
+                if (emprunt.getDateRetour().after(dateLimite)) {
+                    overdueEmprunts.add(emprunt);
+                }
+            }
+        }
+        return overdueEmprunts;
+    }
+
+    public List<Emprunt> getEmpruntsWithoutDelay(){
+        List<Emprunt> allEmprunts = empruntRepository.findByDocumentStatut(Document.Statut.EXIST);
+
+        List<Emprunt> notoverdueEmprunts = new ArrayList<>();
+
+        for (Emprunt emprunt : allEmprunts) {
+            if (emprunt.getDateRetour() != null) {
+                // calculer la date
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(emprunt.getDateRetour());
+                calendar.add(Calendar.DAY_OF_MONTH, 3); // ajouter 3 jours
+                Date dateLimite = calendar.getTime();
+
+                if (dateLimite.after(emprunt.getDateRetour())) {
+                    notoverdueEmprunts.add(emprunt);
+                }
+            }
+        }
+        return notoverdueEmprunts;
     }
 
 }

@@ -75,4 +75,14 @@ public class EmpruntController {
     public List<Emprunt> getEmpruntsRetourner() {
         return empruntService.getEmpruntsRetourner();
     }
+    @GetMapping("/retourneravecretarder")
+    public List<Emprunt> getEmpruntsretourneravecretarder(){
+        return empruntService.getEmpruntsWithDelay();
+    }
+
+    @GetMapping("/retournersansretarder")
+    public List<Emprunt> getEmpruntsretournersansretarder(){
+        return empruntService.getEmpruntsWithoutDelay();
+    }
+
 }
