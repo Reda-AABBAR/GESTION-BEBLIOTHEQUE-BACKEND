@@ -14,6 +14,5 @@ public record Admin (
         String prenom,
         String nom,
         String email,
-        List<Notification> notifications,
-        Photo photo){
+        List<Notification> notifications){
 }

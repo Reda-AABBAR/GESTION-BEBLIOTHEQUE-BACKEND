@@ -14,7 +14,6 @@ public class UtilisateurMapper {
                 .nom(entity.getNom())
                 .prenom(entity.getPrenom())
                 .code(entity.getCode())
-                .photo(entity.getPhoto())
                 .notifications(entity.getNotifications())
                 .build();
     }
@@ -26,7 +25,6 @@ public class UtilisateurMapper {
                 .code(entity.code())
                 .nom(entity.nom())
                 .prenom(entity.prenom())
-                .photo(entity.photo())
                 .notifications(entity.notifications())
                 .build();
     }
@@ -39,7 +37,6 @@ public class UtilisateurMapper {
                 .nom(etudiant.nom())
                 .prenom(etudiant.prenom())
                 .code(etudiant.codeMassar())
-                .photo(etudiant.photo())
                 .notifications(etudiant.notifications())
                 .build();
     }
@@ -51,7 +48,6 @@ public class UtilisateurMapper {
                 .id(dto.id())
                 .nom(dto.nom())
                 .prenom(dto.prenom())
-                .photo(dto.photo())
                 .notifications(dto.notifications())
                 .build();
     }
@@ -64,7 +60,6 @@ public class UtilisateurMapper {
                 .nom(personnel.nom())
                 .prenom(personnel.prenom())
                 .code(personnel.code())
-                .photo(personnel.photo())
                 .notifications(personnel.notifications())
                 .build();
     }
@@ -76,7 +71,6 @@ public class UtilisateurMapper {
                 .id(dto.id())
                 .nom(dto.nom())
                 .prenom(dto.prenom())
-                .photo(dto.photo())
                 .notifications(dto.notifications())
                 .build();
     }
@@ -89,7 +83,6 @@ public class UtilisateurMapper {
                 .nom(admin.nom())
                 .prenom(admin.prenom())
                 .code(admin.code())
-                .photo(admin.photo())
                 .notifications(admin.notifications())
                 .build();
     }
@@ -101,7 +94,6 @@ public class UtilisateurMapper {
                 .id(dto.id())
                 .nom(dto.nom())
                 .prenom(dto.prenom())
-                .photo(dto.photo())
                 .notifications(dto.notifications())
                 .build();
     }
@@ -114,7 +106,6 @@ public class UtilisateurMapper {
                 .nom(bibliothecaire.nom())
                 .prenom(bibliothecaire.prenom())
                 .code(bibliothecaire.code())
-                .photo(bibliothecaire.photo())
                 .notifications(bibliothecaire.notifications())
                 .build();
     }
@@ -126,7 +117,6 @@ public class UtilisateurMapper {
                 .id(dto.id())
                 .nom(dto.nom())
                 .prenom(dto.prenom())
-                .photo(dto.photo())
                 .notifications(dto.notifications())
                 .build();
     }

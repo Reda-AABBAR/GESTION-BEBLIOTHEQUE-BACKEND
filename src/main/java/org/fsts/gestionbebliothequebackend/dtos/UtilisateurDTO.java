@@ -20,7 +20,7 @@ public record UtilisateurDTO(
         String code,
         String email,
         List<Notification> notifications,
-        UtilisateurRole role, Photo photo
+        UtilisateurRole role
 ) {
 
     public static List<UtilisateurDTO> convertToUtilisateurDTOList(Object utilisateursObj) {

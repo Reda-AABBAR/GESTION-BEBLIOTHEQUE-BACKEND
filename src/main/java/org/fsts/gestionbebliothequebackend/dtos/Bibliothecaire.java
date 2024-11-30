@@ -15,6 +15,5 @@ public record Bibliothecaire(
         String nom,
         String email,
         List<Notification> notifications
-        , Photo photo
 ) {
 }

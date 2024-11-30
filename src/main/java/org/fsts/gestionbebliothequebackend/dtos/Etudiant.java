@@ -14,6 +14,6 @@ public record Etudiant(
         String prenom,
         String nom,
         List<Notification> notifications,
-        String email, Photo photo
+        String email
 ) {
 }
