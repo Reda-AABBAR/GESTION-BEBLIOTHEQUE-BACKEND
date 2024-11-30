@@ -15,6 +15,7 @@ public class UtilisateurMapper {
                 .prenom(entity.getPrenom())
                 .code(entity.getCode())
                 .photo(entity.getPhoto())
+                .notifications(entity.getNotifications())
                 .build();
     }
     public static Utilisateur toEntity(UtilisateurDTO entity){
@@ -26,6 +27,7 @@ public class UtilisateurMapper {
                 .nom(entity.nom())
                 .prenom(entity.prenom())
                 .photo(entity.photo())
+                .notifications(entity.notifications())
                 .build();
     }
 
@@ -38,6 +40,7 @@ public class UtilisateurMapper {
                 .prenom(etudiant.prenom())
                 .code(etudiant.codeMassar())
                 .photo(etudiant.photo())
+                .notifications(etudiant.notifications())
                 .build();
     }
 
@@ -49,6 +52,7 @@ public class UtilisateurMapper {
                 .nom(dto.nom())
                 .prenom(dto.prenom())
                 .photo(dto.photo())
+                .notifications(dto.notifications())
                 .build();
     }
 
@@ -61,6 +65,7 @@ public class UtilisateurMapper {
                 .prenom(personnel.prenom())
                 .code(personnel.code())
                 .photo(personnel.photo())
+                .notifications(personnel.notifications())
                 .build();
     }
 
@@ -72,6 +77,7 @@ public class UtilisateurMapper {
                 .nom(dto.nom())
                 .prenom(dto.prenom())
                 .photo(dto.photo())
+                .notifications(dto.notifications())
                 .build();
     }
 
@@ -84,6 +90,7 @@ public class UtilisateurMapper {
                 .prenom(admin.prenom())
                 .code(admin.code())
                 .photo(admin.photo())
+                .notifications(admin.notifications())
                 .build();
     }
 
@@ -95,6 +102,7 @@ public class UtilisateurMapper {
                 .nom(dto.nom())
                 .prenom(dto.prenom())
                 .photo(dto.photo())
+                .notifications(dto.notifications())
                 .build();
     }
 
@@ -107,6 +115,7 @@ public class UtilisateurMapper {
                 .prenom(bibliothecaire.prenom())
                 .code(bibliothecaire.code())
                 .photo(bibliothecaire.photo())
+                .notifications(bibliothecaire.notifications())
                 .build();
     }
 
@@ -118,6 +127,7 @@ public class UtilisateurMapper {
                 .nom(dto.nom())
                 .prenom(dto.prenom())
                 .photo(dto.photo())
+                .notifications(dto.notifications())
                 .build();
     }
 

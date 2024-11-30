@@ -3,6 +3,7 @@ package org.fsts.gestionbebliothequebackend.dtos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import lombok.Builder;
+import org.fsts.gestionbebliothequebackend.entities.Notification;
 import org.fsts.gestionbebliothequebackend.entities.Photo;
 import org.fsts.gestionbebliothequebackend.enums.UtilisateurRole;
 
@@ -18,6 +19,7 @@ public record UtilisateurDTO(
         String prenom,
         String code,
         String email,
+        List<Notification> notifications,
         UtilisateurRole role, Photo photo
 ) {
 
