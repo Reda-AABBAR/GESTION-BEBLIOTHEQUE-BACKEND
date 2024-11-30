@@ -10,6 +10,7 @@ import org.fsts.gestionbebliothequebackend.mappers.ReservationMapper;
 import org.fsts.gestionbebliothequebackend.repositories.DocumentRepository;
 import org.fsts.gestionbebliothequebackend.repositories.ReservationRepository;
 import org.fsts.gestionbebliothequebackend.repositories.UtilisateurRepository;
+import org.fsts.gestionbebliothequebackend.services.NotificationProviderService;
 import org.fsts.gestionbebliothequebackend.services.ReservationService;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationMapper reservationMapper;
     private final UtilisateurRepository utilisateurRepository;
     private final DocumentRepository documentRepository;
+    private final NotificationProviderService notificationProviderService;
 
 
     @Override
@@ -34,6 +36,7 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = reservationMapper.toEntity(reservationDTO);
         reservation = reservationRepository.save(reservation);
         log.info("Created reservation with ID: {}", reservation.getId());
+        notificationProviderService.alertDocumentReservedToAllBibliocathere(reservation.getDocument());
         return reservationMapper.toDTO(reservation);
     }
 
@@ -70,6 +73,10 @@ public class ReservationServiceImpl implements ReservationService {
             document = documentRepository.findById(reservationDTO.documentId())
                     .orElseThrow(() -> new IllegalArgumentException("Document not found for ID: " + id));
             existingReservation.setDocument(document);
+        }
+        if(!existingReservation.getReservationStatus().equals(reservationDTO.reservationStatus())){
+            existingReservation.setReservationStatus(reservationDTO.reservationStatus());
+            notificationProviderService.alertReservationStatusHasBeenChanged(existingReservation);
         }
 
         existingReservation = reservationRepository.save(existingReservation);

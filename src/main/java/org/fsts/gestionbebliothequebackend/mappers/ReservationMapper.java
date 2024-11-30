@@ -24,7 +24,8 @@ public class ReservationMapper {
                 reservation.getId(),
                 reservation.getUtilisateur() != null ? reservation.getUtilisateur().getId() : null,
                 reservation.getDocument() != null ? reservation.getDocument().getId() : null,
-                reservation.getDateReservation()
+                reservation.getDateReservation(),
+                reservation.getReservationStatus()
         );
     }
     public Reservation toEntity(ReservationDTO reservationDTO) {
@@ -55,6 +56,7 @@ public class ReservationMapper {
             reservation.setDocument(document);
         }
         reservation.setDateReservation(reservationDTO.dateReservation());
+        reservation.setReservationStatus(reservationDTO.reservationStatus());
         return reservation;
     }
 }

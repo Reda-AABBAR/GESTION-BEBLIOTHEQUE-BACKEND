@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.fsts.gestionbebliothequebackend.enums.UtilisateurRole;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -27,6 +28,15 @@ public class Utilisateur {
     @Column(unique = true)
     protected String code;
     protected UtilisateurRole role;
+
     @OneToOne(fetch = FetchType.LAZY)
     protected Photo photo;
+
+    @ManyToMany
+    @JoinTable(
+            name = "utilisateur_notifications",
+            joinColumns = @JoinColumn(name = "utilisateur_id"),
+            inverseJoinColumns = @JoinColumn(name = "notification_id")
+    )
+    protected List<Notification> notifications;
 }
