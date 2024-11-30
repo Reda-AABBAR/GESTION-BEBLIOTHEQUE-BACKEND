@@ -3,6 +3,7 @@ package org.fsts.gestionbebliothequebackend.dtos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import lombok.Builder;
+import org.fsts.gestionbebliothequebackend.entities.Photo;
 import org.fsts.gestionbebliothequebackend.enums.UtilisateurRole;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public record UtilisateurDTO(
         String prenom,
         String code,
         String email,
-        UtilisateurRole role
+        UtilisateurRole role, Photo photo
 ) {
 
     public static List<UtilisateurDTO> convertToUtilisateurDTOList(Object utilisateursObj) {

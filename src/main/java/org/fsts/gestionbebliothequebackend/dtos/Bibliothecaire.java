@@ -1,6 +1,7 @@
 package org.fsts.gestionbebliothequebackend.dtos;
 
 import lombok.Builder;
+import org.fsts.gestionbebliothequebackend.entities.Photo;
 
 import java.util.UUID;
 
@@ -11,5 +12,6 @@ public record Bibliothecaire(
         String prenom,
         String nom,
         String email
+        , Photo photo
 ) {
 }
