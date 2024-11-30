@@ -65,4 +65,14 @@ public class EmpruntController {
         utilisateur.setId(utilisateurId);
         return empruntService.getAllEmpruntsByUtilisateur(utilisateur);
     }
+
+    @GetMapping("/retard")
+    public List<Emprunt> getEmpruntsRetard() {
+        return empruntService.getEmpruntsRetard();
+    }
+
+    @GetMapping("/retourner")
+    public List<Emprunt> getEmpruntsRetourner() {
+        return empruntService.getEmpruntsRetourner();
+    }
 }

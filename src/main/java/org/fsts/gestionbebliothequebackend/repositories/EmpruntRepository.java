@@ -11,4 +11,6 @@ import java.util.List;
 public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
     List<Emprunt> findByDocument(Document document);
     List<Emprunt> findByUtilisateur(Utilisateur utilisateur);
-}
+
+    List<Emprunt> findByDocumentStatut(Document.Statut statut);
+    }

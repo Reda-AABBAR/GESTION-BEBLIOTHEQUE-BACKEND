@@ -1,6 +1,5 @@
 package org.fsts.gestionbebliothequebackend.services;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.fsts.gestionbebliothequebackend.entities.Document;
 import org.fsts.gestionbebliothequebackend.entities.Emprunt;
 import org.fsts.gestionbebliothequebackend.entities.Utilisateur;
@@ -10,20 +9,12 @@ import org.fsts.gestionbebliothequebackend.repositories.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.fsts.gestionbebliothequebackend.entities.Document.Statut.NOT_EXIST;
 //package org.fsts.gestionbebliothequebackend.services;
 
-import org.fsts.gestionbebliothequebackend.entities.Emprunt;
-import org.fsts.gestionbebliothequebackend.entities.Document;
-import org.fsts.gestionbebliothequebackend.entities.Utilisateur;
-import org.fsts.gestionbebliothequebackend.repositories.EmpruntRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -79,6 +70,13 @@ public class EmpruntService {
         } else {
             throw new IllegalArgumentException("Emprunt with ID " + empruntId + " does not exist.");
         }
+    }
+    public List<Emprunt> getEmpruntsRetard() {
+        Date currentDate = new Date();
+        return empruntRepository.findByDocumentStatutAndDateRetourBefore(Document.Statut.NOT_EXIST, currentDate);
+    }
+    public List<Emprunt> getEmpruntsRetourner() {
+        return empruntRepository.findByDocumentStatut(Document.Statut.EXIST);
     }
 
 }
