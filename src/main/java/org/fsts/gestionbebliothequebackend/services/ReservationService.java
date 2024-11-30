@@ -10,4 +10,5 @@ public interface ReservationService {
     List<ReservationDTO> getAllReservations();
     ReservationDTO updateReservation(UUID id, ReservationDTO reservationDTO);
     void deleteReservation(UUID id);
+    List<ReservationDTO> getReservationsByUser(UUID utilisateurID);
 }

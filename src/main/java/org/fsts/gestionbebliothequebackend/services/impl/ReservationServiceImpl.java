@@ -92,4 +92,9 @@ public class ReservationServiceImpl implements ReservationService {
         reservationRepository.deleteById(id);
         log.info("Deleted reservation with ID: {}", id);
     }
+
+    @Override
+    public List<ReservationDTO> getReservationsByUser(UUID utilisateurID) {
+        return null;
+    }
 }

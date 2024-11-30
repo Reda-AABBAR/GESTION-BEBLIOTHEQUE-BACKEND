@@ -25,7 +25,7 @@ public class ProjecGestionBebliothequeBackEndApplication {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+    //@Bean
     public CommandLineRunner commandLineRunner(UtilisateurRepository repository){
         return args ->{
                 Utilisateur util = Utilisateur.builder()

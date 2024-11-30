@@ -1,5 +1,6 @@
 package org.fsts.gestionbebliothequebackend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,5 +18,6 @@ public class Photo {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Lob
+    @JsonIgnore
     private byte[] photo;
 }
