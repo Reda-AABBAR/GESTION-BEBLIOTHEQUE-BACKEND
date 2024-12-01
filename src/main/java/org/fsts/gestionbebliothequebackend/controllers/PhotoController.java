@@ -68,20 +68,20 @@ public class PhotoController {
      * @return The photo.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<String> getPhotoById(@PathVariable UUID id) {
+    public ResponseEntity<byte[]> getPhotoById(@PathVariable UUID id) {
         try {
             Photo photo = photoService.getPhotoById(id);
-            return ResponseEntity.ok(photo.getPhoto().toString());
+            return ResponseEntity.ok(photo.getPhoto());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<String> getPhotoByUserId(@PathVariable UUID id) {
+    public ResponseEntity<byte[]> getPhotoByUserId(@PathVariable UUID id) {
         try {
             Photo photo = photoService.getPhotoByUserId(id);
-            return ResponseEntity.ok(photo.getPhoto().toString());
+            return ResponseEntity.ok(photo.getPhoto());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
