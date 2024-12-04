@@ -85,4 +85,30 @@ public class EmpruntController {
         return empruntService.getEmpruntsWithoutDelay();
     }
 
+    @PutMapping("/{id}/statut")
+    public ResponseEntity<Emprunt> updateStatut(
+            @PathVariable Long id,
+            @RequestParam Emprunt.Statut nouveauStatut) {
+        Emprunt updatedEmprunt = empruntService.updateStatut(id, nouveauStatut);
+        return ResponseEntity.ok(updatedEmprunt);
+    }
+
+    @GetMapping("/statut")
+    public ResponseEntity<List<Emprunt>> getByStatut(@RequestParam Emprunt.Statut statut) {
+        List<Emprunt> emprunts = empruntService.getByStatut(statut);
+        return ResponseEntity.ok(emprunts);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Emprunt>> getAllEmprunts() {
+        List<Emprunt> emprunts = empruntService.getAllEmprunts();
+        return ResponseEntity.ok(emprunts);
+    }
+
+    @GetMapping("/utilisateur/{utilisateurId}/is-valid")
+        public ResponseEntity<Boolean> isEmpruntCountValid(@PathVariable Long utilisateurId) {
+        boolean isValid = empruntService.isEmpruntCountValid(utilisateurId);
+        return ResponseEntity.ok(isValid);
+    }
+
 }

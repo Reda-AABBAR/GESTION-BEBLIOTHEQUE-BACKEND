@@ -31,4 +31,13 @@ public class Emprunt {
     @Column(name = "date_retour")
     private Date dateRetour;
 
+    @Enumerated(EnumType.STRING)
+    private Emprunt.Statut statut = Statut.ATTENTE;
+
+    public enum Statut {
+        RETOURNER,
+        ATTENTE,
+        RETARD
+    }
+
 }

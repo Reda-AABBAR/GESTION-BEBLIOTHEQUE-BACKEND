@@ -16,4 +16,7 @@ public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
 
     List<Emprunt> findByDocumentStatutAndDateRetourBefore(Document.Statut statut, Date dateRetour);
 
+    int countByUtilisateurId(Long utilisateurId);
+    List<Emprunt> findByStatut(Emprunt.Statut statut);
+
 }

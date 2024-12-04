@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-//package org.fsts.gestionbebliothequebackend.services;
-
 
 @Service
 public class EmpruntService {
@@ -62,7 +60,7 @@ public class EmpruntService {
             Emprunt emprunt = existingEmprunt.get();
             emprunt.setDateEmprunt(updatedEmprunt.getDateEmprunt());
             emprunt.setDateRetour(updatedEmprunt.getDateRetour());
-            // Additional fields can be set here if needed
+            emprunt.setStatut(updatedEmprunt.getStatut());
             return empruntRepository.save(emprunt);
         } else {
             throw new IllegalArgumentException("Emprunt with ID " + empruntId + " does not exist.");
@@ -117,6 +115,26 @@ public class EmpruntService {
             }
         }
         return notoverdueEmprunts;
+    }
+
+    public Emprunt updateStatut(Long id, Emprunt.Statut nouveauStatut) {
+        Emprunt emprunt = empruntRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Emprunt introuvable avec l'ID : " + id));
+        emprunt.setStatut(nouveauStatut);
+        return empruntRepository.save(emprunt);
+    }
+
+    public List<Emprunt> getByStatut(Emprunt.Statut statut) {
+        return empruntRepository.findByStatut(statut);
+    }
+
+    public List<Emprunt> getAllEmprunts() {
+        return empruntRepository.findAll();
+    }
+
+    public boolean isEmpruntCountValid(Long utilisateurId) {
+        int empruntCount = empruntRepository.countByUtilisateurId(utilisateurId);
+        return empruntCount <= 2;
     }
 
 }
