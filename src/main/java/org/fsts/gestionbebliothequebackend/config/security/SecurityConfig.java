@@ -116,9 +116,8 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*"); // Allow any origin
+        config.addAllowedOriginPattern("http://localhost:3000"); // Allow any origin
         config.addAllowedHeader("*"); // Allow any header
         config.addAllowedMethod("*"); // Allow any method (GET, POST, etc.)
 
