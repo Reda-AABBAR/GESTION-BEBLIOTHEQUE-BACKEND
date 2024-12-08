@@ -106,7 +106,7 @@ public class EmpruntController {
     }
 
     @GetMapping("/utilisateur/{utilisateurId}/is-valid")
-        public ResponseEntity<Boolean> isEmpruntCountValid(@PathVariable Long utilisateurId) {
+        public ResponseEntity<Boolean> isEmpruntCountValid(@PathVariable UUID utilisateurId) {
         boolean isValid = empruntService.isEmpruntCountValid(utilisateurId);
         return ResponseEntity.ok(isValid);
     }

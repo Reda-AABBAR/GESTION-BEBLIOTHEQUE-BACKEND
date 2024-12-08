@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
     List<Emprunt> findByDocument(Document document);
@@ -16,7 +17,7 @@ public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
 
     List<Emprunt> findByDocumentStatutAndDateRetourBefore(Document.Statut statut, Date dateRetour);
 
-    int countByUtilisateurId(Long utilisateurId);
+    int countByUtilisateurId(UUID utilisateurId);
     List<Emprunt> findByStatut(Emprunt.Statut statut);
 
 }

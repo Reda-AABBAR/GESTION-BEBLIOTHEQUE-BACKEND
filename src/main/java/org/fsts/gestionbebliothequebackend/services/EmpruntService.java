@@ -132,7 +132,7 @@ public class EmpruntService {
         return empruntRepository.findAll();
     }
 
-    public boolean isEmpruntCountValid(Long utilisateurId) {
+    public boolean isEmpruntCountValid(UUID utilisateurId) {
         int empruntCount = empruntRepository.countByUtilisateurId(utilisateurId);
         return empruntCount <= 2;
     }
