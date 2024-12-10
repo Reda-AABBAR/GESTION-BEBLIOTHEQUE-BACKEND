@@ -7,9 +7,11 @@ import org.fsts.gestionbebliothequebackend.repositories.DocumentRepository;
 import org.fsts.gestionbebliothequebackend.repositories.EmpruntRepository;
 import org.fsts.gestionbebliothequebackend.repositories.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -135,6 +137,33 @@ public class EmpruntService {
     public boolean isEmpruntCountValid(UUID utilisateurId) {
         int empruntCount = empruntRepository.countByUtilisateurId(utilisateurId);
         return empruntCount <= 2;
+    }
+
+    public Long getEmpruntsCountThisMonth() {
+        return empruntRepository.countEmpruntsByMonth(new Date());
+    }
+
+    public List<Emprunt> getEmpruntsEnCours() {
+        return empruntRepository.findEmpruntsEnCours();
+    }
+
+    public Map<String, Long> getStatistiquesLivres() {
+        Long nbEmpruntes = empruntRepository.countEmpruntsActuels();
+        Long nbDisponibles = documentRepository.countDocumentsDisponibles();
+        return Map.of(
+                "nbEmpruntes", nbEmpruntes,
+                "nbDisponibles", nbDisponibles
+        );
+    }
+
+    public List<Map<String, Object>> getTop30DocumentsEmpruntes() {
+        List<Object[]> results = empruntRepository.findTopDocumentsEmpruntes(PageRequest.of(0, 30));
+        return results.stream()
+                .map(result -> Map.of(
+                        "document", (Document) result[0],
+                        "empruntCount", (Long) result[1]
+                ))
+                .collect(Collectors.toList());
     }
 
 }
