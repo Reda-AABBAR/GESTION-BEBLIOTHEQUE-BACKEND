@@ -1,13 +1,11 @@
 package org.fsts.gestionbebliothequebackend.entities;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.fsts.gestionbebliothequebackend.enums.NotificationType;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -23,4 +21,13 @@ public class Notification {
     private UUID id;
     private String message;
     private NotificationType type;
+
+    private Date date;
+
+    @PrePersist
+    public void prePersist() {
+        if (date == null) {
+            date = new Date();
+        }
+    }
 }

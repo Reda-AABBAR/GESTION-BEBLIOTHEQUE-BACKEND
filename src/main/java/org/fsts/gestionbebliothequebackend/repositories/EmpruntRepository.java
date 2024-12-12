@@ -38,5 +38,6 @@ public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
             "ORDER BY empruntCount DESC")
     List<Object[]> findTopDocumentsEmpruntes(Pageable pageable);
 
+    int countByStatut(Emprunt.Statut statut);
 
 }

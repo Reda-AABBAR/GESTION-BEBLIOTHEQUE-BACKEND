@@ -166,4 +166,8 @@ public class EmpruntService {
                 .collect(Collectors.toList());
     }
 
+    public int countEmpruntsAttente() {
+        return empruntRepository.countByStatut(Emprunt.Statut.ATTENTE);
+    }
+
 }

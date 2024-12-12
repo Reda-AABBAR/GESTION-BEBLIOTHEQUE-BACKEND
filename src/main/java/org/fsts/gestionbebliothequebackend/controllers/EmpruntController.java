@@ -128,4 +128,11 @@ public class EmpruntController {
         return empruntService.getTop30DocumentsEmpruntes();
     }
 
+    @GetMapping("/count-emprunt-valid")
+    public Integer getEmpruntCountValid() {
+        return empruntService.countEmpruntsAttente();
+    }
+
+
+
 }
