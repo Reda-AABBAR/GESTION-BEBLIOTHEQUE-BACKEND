@@ -166,4 +166,16 @@ public class EmpruntService {
                 .collect(Collectors.toList());
     }
 
+    public Map<Integer, Long> getNombreRetoursParMois() {
+        List<Object[]> results = empruntRepository.countRetoursParMois();
+        return results.stream().collect(Collectors.toMap(
+                result -> (Integer) result[0], // Mois
+                result -> (Long) result[1]     // Nombre de retours
+        ));
+    }
+
+    public Double getMoyenneTempsRetard() {
+        return empruntRepository.findMoyenneTempsRetard();
+    }
+
 }

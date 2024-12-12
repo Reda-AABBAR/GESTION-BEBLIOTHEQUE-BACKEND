@@ -118,7 +118,7 @@ public class EmpruntController {
         return empruntService.getEmpruntsEnCours();
     }
 
-    @GetMapping("/documents/statistiques")
+    @GetMapping("/documents/statistiques") // elle retourn les livres disponible et emprunter actuellement
     public Map<String, Long> getStatistiquesLivres() {
         return empruntService.getStatistiquesLivres();
     }
@@ -126,6 +126,17 @@ public class EmpruntController {
     @GetMapping("/top-documents")
     public List<Map<String, Object>> getTop30DocumentsEmpruntes() {
         return empruntService.getTop30DocumentsEmpruntes();
+    }
+
+    @GetMapping("/retours-par-mois")
+    public ResponseEntity<Map<Integer, Long>> getNombreRetoursParMois() {
+        Map<Integer, Long> retoursParMois = empruntService.getNombreRetoursParMois();
+        return ResponseEntity.ok(retoursParMois);
+    }
+    @GetMapping("/moyenne-retard")
+    public ResponseEntity<Double> getMoyenneTempsRetard() {
+        Double moyenneRetard = empruntService.getMoyenneTempsRetard();
+        return ResponseEntity.ok(moyenneRetard);
     }
 
 }
