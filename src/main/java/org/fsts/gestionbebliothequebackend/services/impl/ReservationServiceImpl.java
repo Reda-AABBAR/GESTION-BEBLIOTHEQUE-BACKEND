@@ -8,6 +8,7 @@ import org.fsts.gestionbebliothequebackend.entities.Reservation;
 import org.fsts.gestionbebliothequebackend.entities.Utilisateur;
 import org.fsts.gestionbebliothequebackend.mappers.ReservationMapper;
 import org.fsts.gestionbebliothequebackend.repositories.DocumentRepository;
+import org.fsts.gestionbebliothequebackend.repositories.EmpruntRepository;
 import org.fsts.gestionbebliothequebackend.repositories.ReservationRepository;
 import org.fsts.gestionbebliothequebackend.repositories.UtilisateurRepository;
 import org.fsts.gestionbebliothequebackend.services.NotificationProviderService;
@@ -29,11 +30,13 @@ public class ReservationServiceImpl implements ReservationService {
     private final UtilisateurRepository utilisateurRepository;
     private final DocumentRepository documentRepository;
     private final NotificationProviderService notificationProviderService;
+    private final EmpruntRepository empruntRepository;
 
 
     @Override
     public ReservationDTO createReservation(ReservationDTO reservationDTO) {
         Reservation reservation = reservationMapper.toEntity(reservationDTO);
+
         reservation = reservationRepository.save(reservation);
         log.info("Created reservation with ID: {}", reservation.getId());
         notificationProviderService.alertDocumentReservedToAllBibliocathere(reservation.getDocument());

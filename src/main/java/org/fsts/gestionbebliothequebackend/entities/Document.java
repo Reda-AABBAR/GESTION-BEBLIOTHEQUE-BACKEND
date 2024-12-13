@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 @Data @NoArgsConstructor @AllArgsConstructor
+@Builder
 public class Document {
 
     @Id
@@ -23,6 +24,8 @@ public class Document {
     private String edition;
     private String cote1;
     private String cote2;
+
+    private Integer nbrExemplaire; // throw exeption if it's modifiyed less than reservations & emprint
 
     @ElementCollection
     @Column(length = 1000)
