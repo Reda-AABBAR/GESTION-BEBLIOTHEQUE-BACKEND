@@ -14,7 +14,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
     @Query("SELECT r FROM Reservation r WHERE r.utilisateur.id = :utilisateurId")
     List<Reservation> findReservationsByUtilisateurId(@Param("utilisateurId") UUID utilisateurId);
 
-    @Query("SELECT r FROM Reservation r WHERE r.document.id = :documentId AND r.dateReservation = :reservationDate")
+    @Query("SELECT r FROM Reservation r WHERE r.document.id = :documentId AND r.dateReservation = :reservationDate AND r.reservationStatus = 'ACCEPTED'")
     List<Reservation> findReservationsByDocumentAndDate(
             @Param("documentId") Long documentId,
             @Param("reservationDate") Date reservationDate

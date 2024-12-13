@@ -26,6 +26,8 @@ public class Reservation {
 
     @Temporal(TemporalType.DATE)
     private Date dateReservation;
+
+    @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus;
 }
 

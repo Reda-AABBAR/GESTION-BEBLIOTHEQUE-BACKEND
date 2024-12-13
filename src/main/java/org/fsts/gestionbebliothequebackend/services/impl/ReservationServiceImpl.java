@@ -6,6 +6,7 @@ import org.fsts.gestionbebliothequebackend.dtos.ReservationDTO;
 import org.fsts.gestionbebliothequebackend.entities.Document;
 import org.fsts.gestionbebliothequebackend.entities.Reservation;
 import org.fsts.gestionbebliothequebackend.entities.Utilisateur;
+import org.fsts.gestionbebliothequebackend.enums.ReservationStatus;
 import org.fsts.gestionbebliothequebackend.mappers.ReservationMapper;
 import org.fsts.gestionbebliothequebackend.repositories.DocumentRepository;
 import org.fsts.gestionbebliothequebackend.repositories.EmpruntRepository;
@@ -39,6 +40,7 @@ public class ReservationServiceImpl implements ReservationService {
         if (!isExemplaireExistForReservation(reservation)) {
             throw new IllegalStateException("pas de exemplaire pour ce document pour cette date");
         }
+        reservation.setReservationStatus(ReservationStatus.ENCOURS);
         reservation = reservationRepository.save(reservation);
         log.info("Created reservation with ID: {}", reservation.getId());
         notificationProviderService.alertDocumentReservedToAllBibliocathere(reservation.getDocument());
