@@ -2,10 +2,13 @@ package org.fsts.gestionbebliothequebackend.services;
 
 import org.fsts.gestionbebliothequebackend.entities.Document;
 import org.fsts.gestionbebliothequebackend.entities.Emprunt;
+import org.fsts.gestionbebliothequebackend.entities.Penalite;
 import org.fsts.gestionbebliothequebackend.entities.Utilisateur;
 import org.fsts.gestionbebliothequebackend.repositories.DocumentRepository;
 import org.fsts.gestionbebliothequebackend.repositories.EmpruntRepository;
+import org.fsts.gestionbebliothequebackend.repositories.PenaliteRepository;
 import org.fsts.gestionbebliothequebackend.repositories.UtilisateurRepository;
+import org.fsts.gestionbebliothequebackend.services.impl.PenaliteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,8 @@ public class EmpruntService {
     private DocumentRepository documentRepository;
     @Autowired
     private UtilisateurRepository utilisateurRepository;
+    @Autowired
+    PenaliteServiceImpl penaliteServiceImpl;
 
     public EmpruntService(EmpruntRepository empruntRepository) {
         this.empruntRepository = empruntRepository;
@@ -38,10 +43,14 @@ public class EmpruntService {
         Optional<Utilisateur> utilisateur = utilisateurRepository.findById(utilisateurId);
         Optional<Document> document = documentRepository.findById(documentId);
 
-        if (utilisateur.isPresent() && document.isPresent()) {//cheching if it exist
-            emprunt.setUtilisateur(utilisateur.get());
-            emprunt.setDocument(document.get());
-            return empruntRepository.save(emprunt);
+        if (utilisateur.isPresent() && document.isPresent()) {
+          if(peutEmprunter(utilisateurId,emprunt.getDateEmprunt(),emprunt.getDateRetour()))  {
+                emprunt.setUtilisateur(utilisateur.get());
+                emprunt.setDocument(document.get());
+                return empruntRepository.save(emprunt);
+            }else {
+              throw new IllegalArgumentException("La date d'emprunt invalid");
+          }
         } else {
             throw new IllegalArgumentException("Invalid Document or Utilisateur ID.");
         }
@@ -169,5 +178,18 @@ public class EmpruntService {
     public int countEmpruntsAttente() {
         return empruntRepository.countByStatut(Emprunt.Statut.ATTENTE);
     }
+    private boolean peutEmprunter(UUID utilisateur_Id, Date dateDebutEmprunt, Date dateFinEmprunt) {
+        List<Penalite> penalites = penaliteServiceImpl.getPenalitesByUtilisateur(utilisateur_Id);
 
+        for (Penalite penalite : penalites) {
+            Date dateFinPenalite = penalite.getDateFin();
+
+            if ((dateDebutEmprunt.before(dateFinPenalite) && dateDebutEmprunt.after(penalite.getDateDebut())) ||
+                    (dateFinEmprunt.after(penalite.getDateDebut()) && dateFinEmprunt.before(dateFinPenalite)) ||
+                    (dateDebutEmprunt.before(penalite.getDateDebut()) && dateFinEmprunt.after(dateFinPenalite))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

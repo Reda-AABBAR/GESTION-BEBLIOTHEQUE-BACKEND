@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.fsts.gestionbebliothequebackend.dtos.ReservationDTO;
 import org.fsts.gestionbebliothequebackend.entities.Document;
+import org.fsts.gestionbebliothequebackend.entities.Penalite;
 import org.fsts.gestionbebliothequebackend.entities.Reservation;
 import org.fsts.gestionbebliothequebackend.entities.Utilisateur;
 import org.fsts.gestionbebliothequebackend.mappers.ReservationMapper;
@@ -31,6 +32,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final DocumentRepository documentRepository;
     private final NotificationProviderService notificationProviderService;
     private final EmpruntRepository empruntRepository;
+    private final PenaliteServiceImpl penaliteServiceImpl;
 
 
     @Override
@@ -102,5 +104,19 @@ public class ReservationServiceImpl implements ReservationService {
                 .stream().map(
                         reservationMapper::toDTO
                 ).toList();
+    }
+    public boolean peutReaserver(UUID utilisateur_Id, Date dateDebutEmprunt, Date dateFinEmprunt) {
+        List<Penalite> penalites = penaliteServiceImpl.getPenalitesByUtilisateur(utilisateur_Id);
+
+        for (Penalite penalite : penalites) {
+            Date dateFinPenalite = penalite.getDateFin();
+
+            if ((dateDebutEmprunt.before(dateFinPenalite) && dateDebutEmprunt.after(penalite.getDateDebut())) ||
+                    (dateFinEmprunt.after(penalite.getDateDebut()) && dateFinEmprunt.before(dateFinPenalite)) ||
+                    (dateDebutEmprunt.before(penalite.getDateDebut()) && dateFinEmprunt.after(dateFinPenalite))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
