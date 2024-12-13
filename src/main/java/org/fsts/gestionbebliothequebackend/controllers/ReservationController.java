@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.fsts.gestionbebliothequebackend.dtos.ReservationDTO;
 import org.fsts.gestionbebliothequebackend.entities.Reservation;
 import org.fsts.gestionbebliothequebackend.services.ReservationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -19,9 +21,21 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<ReservationDTO> createReservation(@RequestBody ReservationDTO reservationDTO) {
-        ReservationDTO createdReservation = reservationService.createReservation(reservationDTO);
-        return ResponseEntity.ok(createdReservation);
+    public ResponseEntity<?> createReservation(@RequestBody ReservationDTO reservationDTO) {
+        try {
+            ReservationDTO createdReservation = reservationService.createReservation(reservationDTO);
+            return ResponseEntity.ok(createdReservation); // Return 200 OK if successful
+        } catch (IllegalStateException e) {
+            // Return 409 Conflict with error message if no exemplars are available
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", "All exemplars of the document are currently unavailable.",
+                            "details", e.getMessage()));
+        } catch (Exception e) {
+            // Handle any other unexpected errors
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "An unexpected error occurred.",
+                            "details", e.getMessage()));
+        }
     }
 
     @GetMapping("/{id}")

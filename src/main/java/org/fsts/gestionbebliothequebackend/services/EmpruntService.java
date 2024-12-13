@@ -5,6 +5,7 @@ import org.fsts.gestionbebliothequebackend.entities.Emprunt;
 import org.fsts.gestionbebliothequebackend.entities.Utilisateur;
 import org.fsts.gestionbebliothequebackend.repositories.DocumentRepository;
 import org.fsts.gestionbebliothequebackend.repositories.EmpruntRepository;
+import org.fsts.gestionbebliothequebackend.repositories.ReservationRepository;
 import org.fsts.gestionbebliothequebackend.repositories.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -22,9 +23,11 @@ public class EmpruntService {
     private DocumentRepository documentRepository;
     @Autowired
     private UtilisateurRepository utilisateurRepository;
+    private final ReservationRepository reservationRepository;
 
-    public EmpruntService(EmpruntRepository empruntRepository) {
+    public EmpruntService(EmpruntRepository empruntRepository, ReservationRepository reservationRepository) {
         this.empruntRepository = empruntRepository;
+        this.reservationRepository = reservationRepository;
     }
 
     public List<Emprunt> getAllEmpruntsByDocument(Document document) {
@@ -38,7 +41,17 @@ public class EmpruntService {
         Optional<Utilisateur> utilisateur = utilisateurRepository.findById(utilisateurId);
         Optional<Document> document = documentRepository.findById(documentId);
 
+
         if (utilisateur.isPresent() && document.isPresent()) {//cheching if it exist
+            int activeEmpruntsCount = empruntRepository.countByDocumentAndDateRetourIsNull(document.get()); // Active loans
+            int activeReservationsCount = reservationRepository.countByDocumentAndDateReservationAfter(document.get(), new Date()); // Active reservations
+            if ((activeEmpruntsCount + activeReservationsCount) >= document.get().getNbrExemplaire()) {
+                throw new IllegalStateException("Document with ID " + documentId + " is not available for loan. All exemplars are currently loaned or reserved.");
+            }
+            int activeUserEmpruntsCount = empruntRepository.countByUtilisateurAndDateEmprunt(utilisateur.get(), emprunt.getDateEmprunt());
+            if (activeUserEmpruntsCount >= 2) {
+                throw new IllegalStateException("Utilisateur with ID " + utilisateurId + " already has 2 active loans on " + emprunt.getDateEmprunt());
+            }
             emprunt.setUtilisateur(utilisateur.get());
             emprunt.setDocument(document.get());
             return empruntRepository.save(emprunt);

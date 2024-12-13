@@ -40,4 +40,13 @@ public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
 
     int countByStatut(Emprunt.Statut statut);
 
+    @Query("SELECT e FROM Emprunt e WHERE e.document.id = :documentId AND e.dateRetour IS NULL AND e.dateEmprunt <= :reservationDate")
+    List<Emprunt> findEmpruntsByDocumentAndDate(
+            @Param("documentId") Long documentId,
+            @Param("reservationDate") Date reservationDate
+    );
+    int countByDocumentAndDateRetourIsNull(Document document);
+    int countByUtilisateurAndDateEmprunt(Utilisateur utilisateur, Date dateEmprunt);
+
+
 }

@@ -36,7 +36,9 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public ReservationDTO createReservation(ReservationDTO reservationDTO) {
         Reservation reservation = reservationMapper.toEntity(reservationDTO);
-
+        if (!isExemplaireExistForReservation(reservation)) {
+            throw new IllegalStateException("pas de exemplaire pour ce document pour cette date");
+        }
         reservation = reservationRepository.save(reservation);
         log.info("Created reservation with ID: {}", reservation.getId());
         notificationProviderService.alertDocumentReservedToAllBibliocathere(reservation.getDocument());
@@ -77,6 +79,10 @@ public class ReservationServiceImpl implements ReservationService {
                     .orElseThrow(() -> new IllegalArgumentException("Document not found for ID: " + id));
             existingReservation.setDocument(document);
         }
+        if (!isExemplaireExistForReservation(existingReservation)) {
+            throw new IllegalStateException("No exemplaires available for the document on the selected reservation date.");
+        }
+
         if(!existingReservation.getReservationStatus().equals(reservationDTO.reservationStatus())){
             existingReservation.setReservationStatus(reservationDTO.reservationStatus());
             notificationProviderService.alertReservationStatusHasBeenChanged(existingReservation);
@@ -102,5 +108,20 @@ public class ReservationServiceImpl implements ReservationService {
                 .stream().map(
                         reservationMapper::toDTO
                 ).toList();
+    }
+
+    private boolean isExemplaireExistForReservation(Reservation reservation) {
+        Document document = reservation.getDocument();
+
+        int totalExemplaires = document.getNbrExemplaire();
+
+        int activeReservations = reservationRepository.findReservationsByDocumentAndDate(
+                document.getId(), reservation.getDateReservation()
+        ).size();
+
+        int activeEmprunts = empruntRepository.findEmpruntsByDocumentAndDate(
+                document.getId(), reservation.getDateReservation()
+        ).size();
+        return totalExemplaires - activeReservations - activeEmprunts > 0;
     }
 }
