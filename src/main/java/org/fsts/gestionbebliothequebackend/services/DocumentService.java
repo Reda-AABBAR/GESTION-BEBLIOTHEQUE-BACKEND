@@ -57,6 +57,7 @@ public class DocumentService {
         document.setCote1(json.get("cote1").asText());
         document.setCote2(json.get("cote2").asText());
         document.setStatut(Document.Statut.valueOf(json.get("statut").asText()));
+        document.setNbrExemplaire(json.get("nbrExemplaire").asInt());
 
         // Parse lists for auteurs and descripteurs
         List<String> auteurs = new ArrayList<>();

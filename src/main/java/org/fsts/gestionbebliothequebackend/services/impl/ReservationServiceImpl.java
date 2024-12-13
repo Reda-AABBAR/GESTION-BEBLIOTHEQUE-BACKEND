@@ -38,7 +38,11 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public ReservationDTO createReservation(ReservationDTO reservationDTO) {
         Reservation reservation = reservationMapper.toEntity(reservationDTO);
-
+        if (!isExemplaireExistForReservation(reservation)) {
+            throw new IllegalStateException("pas de exemplaire pour ce document pour cette date");
+        }
+        if (!peutReserver(reservation.getUtilisateur().getId(),reservation.getDateReservation()))
+            throw new IllegalArgumentException("La Date de reservation est invalid");
         reservation = reservationRepository.save(reservation);
         log.info("Created reservation with ID: {}", reservation.getId());
         notificationProviderService.alertDocumentReservedToAllBibliocathere(reservation.getDocument());
@@ -79,7 +83,11 @@ public class ReservationServiceImpl implements ReservationService {
                     .orElseThrow(() -> new IllegalArgumentException("Document not found for ID: " + id));
             existingReservation.setDocument(document);
         }
-        if(!existingReservation.getReservationStatus().equals(reservationDTO.reservationStatus())){
+        if (!isExemplaireExistForReservation(existingReservation)) {
+            throw new IllegalStateException("No exemplaires available for the document on the selected reservation date.");
+        }
+
+        if (!existingReservation.getReservationStatus().equals(reservationDTO.reservationStatus())) {
             existingReservation.setReservationStatus(reservationDTO.reservationStatus());
             notificationProviderService.alertReservationStatusHasBeenChanged(existingReservation);
         }
@@ -105,18 +113,31 @@ public class ReservationServiceImpl implements ReservationService {
                         reservationMapper::toDTO
                 ).toList();
     }
-    public boolean peutReaserver(UUID utilisateur_Id, Date dateDebutEmprunt, Date dateFinEmprunt) {
+
+    public boolean peutReserver(UUID utilisateur_Id, Date dateReservation) {
         List<Penalite> penalites = penaliteServiceImpl.getPenalitesByUtilisateur(utilisateur_Id);
 
         for (Penalite penalite : penalites) {
             Date dateFinPenalite = penalite.getDateFin();
 
-            if ((dateDebutEmprunt.before(dateFinPenalite) && dateDebutEmprunt.after(penalite.getDateDebut())) ||
-                    (dateFinEmprunt.after(penalite.getDateDebut()) && dateFinEmprunt.before(dateFinPenalite)) ||
-                    (dateDebutEmprunt.before(penalite.getDateDebut()) && dateFinEmprunt.after(dateFinPenalite))) {
+            if ((dateReservation.before(dateFinPenalite) && dateReservation.after(penalite.getDateDebut()))) {
                 return false;
             }
         }
         return true;
     }
-}
+        private boolean isExemplaireExistForReservation (Reservation reservation){
+            Document document = reservation.getDocument();
+
+            int totalExemplaires = document.getNbrExemplaire();
+
+            int activeReservations = reservationRepository.findReservationsByDocumentAndDate(
+                    document.getId(), reservation.getDateReservation()
+            ).size();
+
+            int activeEmprunts = empruntRepository.findEmpruntsByDocumentAndDate(
+                    document.getId(), reservation.getDateReservation()
+            ).size();
+            return totalExemplaires - activeReservations - activeEmprunts > 0;
+        }
+    }
