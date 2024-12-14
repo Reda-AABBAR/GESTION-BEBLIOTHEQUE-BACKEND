@@ -1,9 +1,13 @@
 package org.fsts.gestionbebliothequebackend;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.fsts.gestionbebliothequebackend.config.security.RsaKeyConfig;
+import org.fsts.gestionbebliothequebackend.entities.Document;
 import org.fsts.gestionbebliothequebackend.entities.Utilisateur;
 import org.fsts.gestionbebliothequebackend.enums.UtilisateurRole;
 import org.fsts.gestionbebliothequebackend.repositories.UtilisateurRepository;
+import org.fsts.gestionbebliothequebackend.services.DocumentService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -40,4 +44,42 @@ public class ProjecGestionBebliothequeBackEndApplication {
                     repository.save(util);
         };
     }
+    @Bean
+    public CommandLineRunner testSaveDocument(DocumentService documentService) {
+        return args -> {
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // Exemple de JSON à sauvegarder
+            String jsonString = """
+        {
+            "titre": "Apprendre Spring Boot",
+            "sousTitre": "Une introduction pratique",
+            "edition": "1ère édition",
+            "cote1": "001.12",
+            "cote2": "SPRING-101",
+            "nbrExemplaire": 3,
+            "auteurs": ["John Doe", "Jane Smith"],
+            "descripteurs": ["Spring", "Boot", "Java"],
+            "img": "iVBORw0KGgoAAAANSUhEUgAAAAUA",
+            "statut": "EXIST"
+        }
+        """;
+
+            try {
+                // Convertir le JSON string en JsonNode
+                JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+                // Appeler la méthode saveDocumentFromJson
+                Document savedDocument = documentService.saveDocumentFromJson(jsonNode);
+
+                // Afficher le document sauvegardé dans la console
+                System.out.println("Document sauvegardé : " + savedDocument);
+
+            } catch (Exception e) {
+                // Gérer les exceptions
+                System.err.println("Erreur lors de la sauvegarde du document : " + e.getMessage());
+            }
+        };
+    }
+
 }
