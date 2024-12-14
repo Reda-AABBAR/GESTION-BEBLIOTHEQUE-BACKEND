@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,6 +79,11 @@ public class DocumentService {
 
         for (JsonNode json : jsonArray) {
             Document savedDocument = saveDocumentFromJson(json);
+            if (json.has("img")) {
+                String base64Image = json.get("img").asText();
+                byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+                savedDocument.setImg(imageBytes);
+            }
             savedDocuments.add(savedDocument);
         }
 
@@ -98,6 +104,12 @@ public class DocumentService {
         document.setCote1(json.get("cote1").asText());
         document.setCote2(json.get("cote2").asText());
         document.setStatut(Document.Statut.valueOf(json.get("statut").asText()));
+        //stocker l image
+        if (json.has("img")) {
+            String base64Image = json.get("img").asText();
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            document.setImg(imageBytes);
+        }
 
         List<String> auteurs = new ArrayList<>();
         json.get("auteurs").forEach(auteur -> auteurs.add(auteur.asText()));
@@ -140,8 +152,6 @@ public class DocumentService {
     public Optional<Document> findById(Long id) {
         return documentRepository.findById(id);
     }
-
-
 
 
 
