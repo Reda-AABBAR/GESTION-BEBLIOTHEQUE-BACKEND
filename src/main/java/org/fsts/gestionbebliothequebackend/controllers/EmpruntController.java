@@ -29,6 +29,8 @@ public class EmpruntController {
         }
     }
 
+
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteEmprunt(@PathVariable Long id) {
         try {
@@ -48,6 +50,7 @@ public class EmpruntController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
 
     @GetMapping("/by-document/{documentId}")
     public List<Emprunt> getEmpruntsByDocument(@PathVariable Long documentId) {
@@ -85,7 +88,7 @@ public class EmpruntController {
     @PutMapping("/{id}/statut")
     public ResponseEntity<Emprunt> updateStatut(
             @PathVariable Long id,
-            @RequestParam Emprunt.Statut nouveauStatut) {
+                @RequestParam Emprunt.Statut nouveauStatut) {
         Emprunt updatedEmprunt = empruntService.updateStatut(id, nouveauStatut);
         return ResponseEntity.ok(updatedEmprunt);
     }

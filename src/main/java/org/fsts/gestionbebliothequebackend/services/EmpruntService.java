@@ -189,6 +189,11 @@ public class EmpruntService {
         Emprunt emprunt = empruntRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Emprunt introuvable avec l'ID : " + id));
         emprunt.setStatut(nouveauStatut);
+        if(nouveauStatut == Emprunt.Statut.RETOURNER)
+            emprunt.setDateRetour(new Date());
+        else {
+            emprunt.setDateRetour(null);
+        }
         return empruntRepository.save(emprunt);
     }
 
