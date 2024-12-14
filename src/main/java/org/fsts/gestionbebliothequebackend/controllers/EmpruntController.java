@@ -108,31 +108,5 @@ public class EmpruntController {
         return ResponseEntity.ok(isValid);
     }
 
-    @GetMapping("/count-this-month")
-    public Long getEmpruntsCountThisMonth() {
-        return empruntService.getEmpruntsCountThisMonth();
-    }
-
-    @GetMapping("/emprunts/en-cours")
-    public List<Emprunt> getEmpruntsEnCours() {
-        return empruntService.getEmpruntsEnCours();
-    }
-
-    @GetMapping("/documents/statistiques")
-    public Map<String, Long> getStatistiquesLivres() {
-        return empruntService.getStatistiquesLivres();
-    }
-
-    @GetMapping("/top-documents")
-    public List<Map<String, Object>> getTop30DocumentsEmpruntes() {
-        return empruntService.getTop30DocumentsEmpruntes();
-    }
-
-    @GetMapping("/count-emprunt-valid")
-    public Integer getEmpruntCountValid() {
-        return empruntService.countEmpruntsAttente();
-    }
-
-
 
 }

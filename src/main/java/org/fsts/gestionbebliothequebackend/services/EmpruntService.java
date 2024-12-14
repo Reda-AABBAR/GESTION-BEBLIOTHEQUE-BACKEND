@@ -212,6 +212,9 @@ public class EmpruntService {
     public List<Emprunt> getEmpruntsEnCours() {
         return empruntRepository.findEmpruntsEnCours();
     }
+    public  List<Emprunt> getEmpruntRetournerThisMonth(){
+        return empruntRepository.findEmpruntRetournerThisMonth();
+    }
 
     public Map<String, Long> getStatistiquesLivres() {
         Long nbEmpruntes = empruntRepository.countEmpruntsActuels();
@@ -232,9 +235,6 @@ public class EmpruntService {
                 .collect(Collectors.toList());
     }
 
-    public int countEmpruntsAttente() {
-        return empruntRepository.countByStatut(Emprunt.Statut.ATTENTE);
-    }
     private boolean peutEmprunter(UUID utilisateur_Id, Date dateDebutEmprunt, Date dateFinEmprunt) {
         List<Penalite> penalites = penaliteServiceImpl.getPenalitesByUtilisateur(utilisateur_Id);
 
@@ -248,5 +248,15 @@ public class EmpruntService {
             }
         }
         return true;
+    }
+
+    public Float DureeMoyenDeRetard(){
+        List<Emprunt> empruntsretarde = getEmpruntsWithDelay();
+        int joursretarstotal = 0;
+        for(Emprunt emprunt : empruntsretarde){
+            joursretarstotal += emprunt.getJoursRetard();
+        }
+        Float moyen = (joursretarstotal * 1.0f) / empruntsretarde.size();
+        return moyen;
     }
 }
