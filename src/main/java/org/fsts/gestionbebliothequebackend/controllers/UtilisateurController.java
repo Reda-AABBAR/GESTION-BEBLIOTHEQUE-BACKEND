@@ -19,8 +19,8 @@ import java.util.UUID;
 public class UtilisateurController {
     private final UtilisateurService service;
     @PostMapping("/save")
-    public ResponseEntity<UtilisateurDTO> saveUtilisateur(@RequestBody UtilisateurDTO utilisateur,@RequestHeader String password){
-        return ResponseEntity.ok(service.saveUtilisateur(utilisateur,password));
+    public ResponseEntity<?> saveUtilisateur(@RequestBody UtilisateurDTO utilisateur,@RequestHeader String password){
+            return ResponseEntity.ok(service.saveUtilisateur(utilisateur, password));
     }
 
     @PostMapping("/etudiant")

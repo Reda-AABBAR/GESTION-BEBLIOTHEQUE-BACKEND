@@ -2,11 +2,15 @@ package org.fsts.gestionbebliothequebackend.services;
 
 import org.fsts.gestionbebliothequebackend.entities.Document;
 import org.fsts.gestionbebliothequebackend.entities.Emprunt;
+import org.fsts.gestionbebliothequebackend.entities.Penalite;
 import org.fsts.gestionbebliothequebackend.entities.Utilisateur;
+import org.fsts.gestionbebliothequebackend.enums.ReservationStatus;
 import org.fsts.gestionbebliothequebackend.repositories.DocumentRepository;
 import org.fsts.gestionbebliothequebackend.repositories.EmpruntRepository;
+import org.fsts.gestionbebliothequebackend.repositories.PenaliteRepository;
 import org.fsts.gestionbebliothequebackend.repositories.ReservationRepository;
 import org.fsts.gestionbebliothequebackend.repositories.UtilisateurRepository;
+import org.fsts.gestionbebliothequebackend.services.impl.PenaliteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,8 @@ public class EmpruntService {
     private DocumentRepository documentRepository;
     @Autowired
     private UtilisateurRepository utilisateurRepository;
+    @Autowired
+    PenaliteServiceImpl penaliteServiceImpl;
     private final ReservationRepository reservationRepository;
 
     public EmpruntService(EmpruntRepository empruntRepository, ReservationRepository reservationRepository) {
@@ -44,7 +50,7 @@ public class EmpruntService {
 
         if (utilisateur.isPresent() && document.isPresent()) {//cheching if it exist
             int activeEmpruntsCount = empruntRepository.countByDocumentAndDateRetourIsNull(document.get()); // Active loans
-            int activeReservationsCount = reservationRepository.countByDocumentAndDateReservationAfter(document.get(), new Date()); // Active reservations
+            int activeReservationsCount = reservationRepository.countByDocumentAndDateReservationAfterAndReservationStatus(document.get(), new Date(), ReservationStatus.ACCEPTED); // Active reservations
             if ((activeEmpruntsCount + activeReservationsCount) >= document.get().getNbrExemplaire()) {
                 throw new IllegalStateException("Document with ID " + documentId + " is not available for loan. All exemplars are currently loaned or reserved.");
             }
@@ -52,9 +58,11 @@ public class EmpruntService {
             if (activeUserEmpruntsCount >= 2) {
                 throw new IllegalStateException("Utilisateur with ID " + utilisateurId + " already has 2 active loans on " + emprunt.getDateEmprunt());
             }
-            emprunt.setUtilisateur(utilisateur.get());
-            emprunt.setDocument(document.get());
-            return empruntRepository.save(emprunt);
+            if(peutEmprunter(utilisateurId,emprunt.getDateEmprunt(),emprunt.getDateRetour())) {
+                emprunt.setUtilisateur(utilisateur.get());
+                emprunt.setDocument(document.get());
+                return empruntRepository.save(emprunt);
+            }else throw new IllegalArgumentException("La date d emprunt est invalid");
         } else {
             throw new IllegalArgumentException("Invalid Document or Utilisateur ID.");
         }
@@ -73,14 +81,59 @@ public class EmpruntService {
 
         if (existingEmprunt.isPresent()) {
             Emprunt emprunt = existingEmprunt.get();
-            emprunt.setDateEmprunt(updatedEmprunt.getDateEmprunt());
-            emprunt.setDateRetour(updatedEmprunt.getDateRetour());
-            emprunt.setStatut(updatedEmprunt.getStatut());
+
+            // Get the existing and updated loan dates
+            Date oldDateEmprunt = emprunt.getDateEmprunt();
+            Date oldDateRetour = emprunt.getDateRetour();
+            Date newDateEmprunt = updatedEmprunt.getDateEmprunt();
+            Date newDateRetour = updatedEmprunt.getDateRetour();
+
+            // Check if the dates have been changed, and if so, validate them
+            boolean datesChanged = !newDateEmprunt.equals(oldDateEmprunt) || !newDateRetour.equals(oldDateRetour);
+
+            if (datesChanged) {
+                // Check if the document is available with the new dates
+                Optional<Document> document = documentRepository.findById(emprunt.getDocument().getId());
+                if (document.isPresent()) {
+                    int activeEmpruntsCount = empruntRepository.countByDocumentAndDateRetourIsNull(document.get()); // Active loans
+                    int activeReservationsCount = reservationRepository.countByDocumentAndDateReservationAfterAndReservationStatus(
+                            document.get(), new Date(), ReservationStatus.ACCEPTED); // Active reservations
+
+                    if ((activeEmpruntsCount + activeReservationsCount) >= document.get().getNbrExemplaire()) {
+                        throw new IllegalStateException("Document with ID " + emprunt.getDocument().getId() + " is not available for loan. All exemplars are currently loaned or reserved.");
+                    }
+                } else {
+                    throw new IllegalArgumentException("Document with ID " + emprunt.getDocument().getId() + " does not exist.");
+                }
+
+                // Check if the user exceeds the limit of active loans for the new loan date
+                int activeUserEmpruntsCount = empruntRepository.countByUtilisateurAndDateEmprunt(updatedEmprunt.getUtilisateur(), newDateEmprunt);
+                if (activeUserEmpruntsCount >= 2) {
+                    throw new IllegalStateException("Utilisateur with ID " + updatedEmprunt.getUtilisateur().getId() + " already has 2 active loans on " + newDateEmprunt);
+                }
+
+                // Validate the new dates (you can add your specific logic in `peutEmprunter` method)
+                if (!peutEmprunter(updatedEmprunt.getUtilisateur().getId(), newDateEmprunt, newDateRetour)) {
+                    throw new IllegalArgumentException("La date d'emprunt est invalide.");
+                }
+
+                // Update the emprunt object with the new values
+                emprunt.setDateEmprunt(newDateEmprunt);
+                emprunt.setDateRetour(newDateRetour);
+            }
+
+            // Update the status if it has changed
+            if (updatedEmprunt.getStatut() != null && !updatedEmprunt.getStatut().equals(emprunt.getStatut())) {
+                emprunt.setStatut(updatedEmprunt.getStatut());
+            }
+
+            // Save the updated emprunt
             return empruntRepository.save(emprunt);
         } else {
             throw new IllegalArgumentException("Emprunt with ID " + empruntId + " does not exist.");
         }
     }
+
     public List<Emprunt> getEmpruntsRetard() {
         Date currentDate = new Date();
         return empruntRepository.findByDocumentStatutAndDateRetourBefore(Document.Statut.NOT_EXIST, currentDate);
@@ -182,5 +235,18 @@ public class EmpruntService {
     public int countEmpruntsAttente() {
         return empruntRepository.countByStatut(Emprunt.Statut.ATTENTE);
     }
+    private boolean peutEmprunter(UUID utilisateur_Id, Date dateDebutEmprunt, Date dateFinEmprunt) {
+        List<Penalite> penalites = penaliteServiceImpl.getPenalitesByUtilisateur(utilisateur_Id);
 
+        for (Penalite penalite : penalites) {
+            Date dateFinPenalite = penalite.getDateFin();
+
+            if ((dateDebutEmprunt.before(dateFinPenalite) && dateDebutEmprunt.after(penalite.getDateDebut())) ||
+                    (dateFinEmprunt.after(penalite.getDateDebut()) && dateFinEmprunt.before(dateFinPenalite)) ||
+                    (dateDebutEmprunt.before(penalite.getDateDebut()) && dateFinEmprunt.after(dateFinPenalite))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

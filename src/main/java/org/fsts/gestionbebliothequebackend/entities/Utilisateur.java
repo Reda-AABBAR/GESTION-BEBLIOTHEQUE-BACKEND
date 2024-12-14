@@ -39,4 +39,7 @@ public class Utilisateur {
             inverseJoinColumns = @JoinColumn(name = "notification_id")
     )
     protected List<Notification> notifications;
+
+    @OneToMany(mappedBy = "utilisateur")
+    List<Penalite> Penalites;
 }

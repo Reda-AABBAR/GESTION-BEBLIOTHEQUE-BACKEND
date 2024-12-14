@@ -2,6 +2,7 @@ package org.fsts.gestionbebliothequebackend.repositories;
 
 import org.fsts.gestionbebliothequebackend.entities.Document;
 import org.fsts.gestionbebliothequebackend.entities.Reservation;
+import org.fsts.gestionbebliothequebackend.enums.ReservationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +21,22 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
             @Param("reservationDate") Date reservationDate
     );
 
-    int countByDocumentAndDateReservationAfter(Document document, Date date);
+    int countByDocumentAndDateReservationAfterAndReservationStatus(Document document, Date dateReservation, ReservationStatus reservationStatus);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.utilisateur.id = :utilisateurId AND r.dateReservation = :reservationDate")
+    int countReservationsByUtilisateurAndDate(
+            @Param("utilisateurId") UUID utilisateurId,
+            @Param("reservationDate") Date reservationDate
+    );
+
+    @Query("SELECT COUNT(r) FROM Reservation r " +
+            "WHERE r.utilisateur.id = :utilisateurId " +
+            "AND r.reservationStatus = 'ACCEPTED' " +
+            "AND r.dateReservation BETWEEN :startDate AND :endDate")
+    int countConfirmedReservationsWithinDateRange(
+            @Param("utilisateurId") UUID utilisateurId,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate);
+
 
 }

@@ -26,6 +26,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public UtilisateurDTO upDatePassword(UUID id,String newPassword) {
+        if (newPassword == null || newPassword.length() < 6) {
+            log.error("Password is too short. It must be at least 6 characters.");
+            throw new RuntimeException("Password must be at least 6 characters long.");
+        }
         Utilisateur u = repository.findById(id).orElseThrow(
                 ()->{
                     log.error("No user for id: {}", id);
@@ -42,6 +46,16 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public UtilisateurDTO saveUtilisateur(UtilisateurDTO dto, String password) {
+        if (!dto.email().matches("^[a-zA-Z0-9._%+-]+@uhp\\.ac\\.ma$")) {
+            log.error("Email {} is not valid. It should follow the pattern: reda.aabbar@uhp.ac.ma", dto.email());
+            throw new RuntimeException("Invalid email format. It should follow the pattern: reda.aabbar@uhp.ac.ma");
+        }
+        // Validate password length
+        if (password == null || password.length() < 6) {
+            log.error("Password is too short. It must be at least 6 characters.");
+            throw new RuntimeException("Password must be at least 6 characters long.");
+        }
+
         if(isEmailExist(dto.email())){
             log.error("email {} est déjà exist dans la base de données",dto.email());
             throw new RuntimeException("email déjà exist dans la base de données");
@@ -58,6 +72,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public UtilisateurDTO updateUtilisateur(UUID id, UtilisateurDTO dto) {
+        if (!dto.email().matches("^[a-zA-Z0-9._%+-]+@uhp\\.ac\\.ma$")) {
+            log.error("Email {} is not valid. It should follow the pattern: reda.aabbar@uhp.ac.ma", dto.email());
+            throw new RuntimeException("Invalid email format. It should follow the pattern: reda.aabbar@uhp.ac.ma");
+        }
         Utilisateur utilisateur = repository.findById(id).orElseThrow(
                 ()->{
                     log.error("no utilisateur trouver pour l'id {}",id);
@@ -81,6 +99,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public UtilisateurDTO updateUtilisateurByEmail(String email, UtilisateurDTO dto) {
+        if (!dto.email().matches("^[a-zA-Z0-9._%+-]+@uhp\\.ac\\.ma$")) {
+            log.error("Email {} is not valid. It should follow the pattern: reda.aabbar@uhp.ac.ma", dto.email());
+            throw new RuntimeException("Invalid email format. It should follow the pattern: reda.aabbar@uhp.ac.ma");
+        }
         Utilisateur utilisateur = repository.findByEmail(email).orElseThrow(
                 ()->{
                     log.error("no utilisateur trouver pour l'email {}",email);
@@ -432,6 +454,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public UtilisateurDTO upDatePasswordByEmail(String email, String newPassword) {
+        if (newPassword == null || newPassword.length() < 6) {
+            log.error("Password is too short. It must be at least 6 characters.");
+            throw new RuntimeException("Password must be at least 6 characters long.");
+        }
         Utilisateur u = repository.findByEmail(email).orElseThrow(
                 ()->{
                     log.error("No user for email: {}", email);

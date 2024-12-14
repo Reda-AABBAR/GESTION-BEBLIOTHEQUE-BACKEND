@@ -1,12 +1,11 @@
 package org.fsts.gestionbebliothequebackend.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
 import java.util.UUID;
+import java.util.Calendar;
 
 @Entity
 @NoArgsConstructor
@@ -20,6 +19,26 @@ public class Penalite {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    // ajouter duree (définie par bibliocather)
-    // date départ
+    @ManyToOne
+    @JoinColumn(name = "utilisateur_id")
+    private Utilisateur utilisateur;
+
+    @Column(name = "dateDebut")
+    private Date dateDebut;
+
+    @Column(name = "duree-Penalite")
+    private int duree;
+
+    public Date getDateFin() {
+        if (dateDebut == null) {
+            return null;
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateDebut);
+        calendar.add(Calendar.DAY_OF_MONTH, duree);
+
+        return calendar.getTime();
+    }
+
 }
