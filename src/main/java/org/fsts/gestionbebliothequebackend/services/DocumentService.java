@@ -59,6 +59,11 @@ public class DocumentService {
         document.setCote2(json.get("cote2").asText());
         document.setStatut(Document.Statut.valueOf(json.get("statut").asText()));
         document.setNbrExemplaire(json.get("nbrExemplaire").asInt());
+        if (json.has("img")) {
+            String base64Image = json.get("img").asText();
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            document.setImg(imageBytes);
+        }
 
         // Parse lists for auteurs and descripteurs
         List<String> auteurs = new ArrayList<>();
