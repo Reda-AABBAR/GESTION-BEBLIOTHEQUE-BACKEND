@@ -3,6 +3,9 @@ package org.fsts.gestionbebliothequebackend.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Entity
@@ -40,4 +43,30 @@ public class Emprunt {
         RETARD
     }
 
+    public int getJoursRetard() {
+        if (dateRetour != null) {
+            // Si le document est déjà retourné, aucun retard
+            return 0;
+        }
+
+        // Convertir `dateEmprunt` en LocalDate pour les calculs
+        LocalDate dateEmpruntLocal = dateEmprunt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // Définir la limite d'emprunt (3 jours après la date d'emprunt)
+        LocalDate dateLimite = dateEmpruntLocal.plusDays(3);
+
+        // Obtenir la date actuelle
+        LocalDate dateActuelle = LocalDate.now();
+
+        // Vérifier si la date actuelle dépasse la date limite
+        if (dateActuelle.isAfter(dateLimite)) {
+            // Calculer et retourner le nombre de jours de retard
+            return (int) ChronoUnit.DAYS.between(dateLimite, dateActuelle);
+        }
+
+        // Pas de retard
+        return 0;
+
+
+    }
 }

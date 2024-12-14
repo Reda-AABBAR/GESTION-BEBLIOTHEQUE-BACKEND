@@ -28,6 +28,8 @@ public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
 
     @Query("SELECT e FROM Emprunt e WHERE (e.statut = 'ATTENTE' OR e.statut = 'RETARD') AND e.dateRetour IS NULL")
     List<Emprunt> findEmpruntsEnCours();
+    @Query("SELECT e FROM Emprunt e WHERE e.statut = 'RETOURNER' AND e.dateRetour IS NOT NULL AND FUNCTION('MONTH', e.dateRetour) = FUNCTION('MONTH', CURRENT_DATE) AND FUNCTION('YEAR', e.dateRetour) = FUNCTION('YEAR', CURRENT_DATE)")
+    List<Emprunt> findEmpruntRetournerThisMonth();
 
     @Query("SELECT COUNT(e) FROM Emprunt e WHERE (e.statut = 'ATTENTE' OR e.statut = 'RETARD')")
     Long countEmpruntsActuels();
