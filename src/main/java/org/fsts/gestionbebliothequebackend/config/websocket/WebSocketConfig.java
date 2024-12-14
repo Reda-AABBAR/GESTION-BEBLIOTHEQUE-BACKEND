@@ -24,7 +24,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws") // ws:localhost:8080/ws -> connection path
-                .setAllowedOrigins("http://localhost:*")
+                .setAllowedOrigins("http://localhost:4200")
                 .withSockJS();
     }
 
@@ -33,7 +33,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app"); // ws:localhost:8080/app/... -> where u have push the message
-        registry.enableSimpleBroker("/notifications"); // ws:localhost:8080/notifications/... -> subscription path (broadcast path)
+        registry.enableSimpleBroker("/notifications","/user"); // ws:localhost:8080/notifications/... -> subscription path (broadcast path)
         registry.setUserDestinationPrefix("/user");
     }
 

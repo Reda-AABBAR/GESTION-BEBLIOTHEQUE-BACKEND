@@ -36,7 +36,8 @@ public class ProjecGestionBebliothequeBackEndApplication {
                         .role(UtilisateurRole.ADMIN)
                         .password(passwordEncoder().encode("1234"))
                         .build();
-                repository.save(util);
+                if(repository.countByEmail("test@test.com")== 0)
+                    repository.save(util);
         };
     }
 }
