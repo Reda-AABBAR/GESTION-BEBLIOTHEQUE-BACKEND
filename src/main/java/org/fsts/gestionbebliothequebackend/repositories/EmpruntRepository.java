@@ -50,5 +50,16 @@ public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
     int countByDocumentAndDateRetourIsNull(Document document);
     int countByUtilisateurAndDateEmprunt(Utilisateur utilisateur, Date dateEmprunt);
 
+    @Query("SELECT FUNCTION('MONTH', e.dateRetour) AS mois, COUNT(e) AS nombreRetours " +
+            "FROM Emprunt e " +
+            "WHERE e.statut = 'RETOURNER' " +
+            "GROUP BY FUNCTION('MONTH', e.dateRetour)")
+    List<Object[]> countRetoursParMois();
+
+    /*@Query("SELECT AVG(FUNCTION('DATEDIFF', e.dateRetour, e.dateEmprunt)) AS moyenneRetard " +
+            "FROM Emprunt e " +
+            "WHERE e.statut = 'RETARD'")
+    Double findMoyenneTempsRetard();*/
+
 
 }
