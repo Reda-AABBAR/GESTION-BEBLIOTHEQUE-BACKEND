@@ -23,7 +23,7 @@ public class DocumentService {
         List<Document> documents = documentRepository.findAll();
 
         // Ajouter le préfixe à l'image lors de la récupération des documents
-        for (Document document : documents) {
+        /*for (Document document : documents) {
             if (document.getImg() != null) {
                 String base64Image = Base64.getEncoder().encodeToString(document.getImg());
                 base64Image = addPrefixToBase64Image(base64Image);
@@ -32,7 +32,7 @@ public class DocumentService {
                 // Stocker l'image sous forme de tableau d'octets dans le champ @Lob (img)
                 document.setImg(imageBytes);
             }
-        }
+        }*/
 
         return documents;
     }
