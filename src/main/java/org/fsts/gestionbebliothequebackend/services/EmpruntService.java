@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -275,5 +276,10 @@ public class EmpruntService {
     /*public Double getMoyenneTempsRetard() {
         return empruntRepository.findMoyenneTempsRetard();
     }*/
+
+
+    public List<Emprunt> getAllEmprintRetard(){
+        return empruntRepository.findAllEmprintEnRetard(LocalDate.now());
+    }
 
 }

@@ -141,5 +141,9 @@ public class EmpruntController {
         Double moyenneRetard = empruntService.getMoyenneTempsRetard();
         return ResponseEntity.ok(moyenneRetard);
     }*/
-
+    @GetMapping("/retards")
+    public ResponseEntity<List<Emprunt>> getEmprintsEnRetard() {
+        List<Emprunt> retards = empruntService.getAllEmprintRetard();
+        return ResponseEntity.ok(retards);
+    }
 }

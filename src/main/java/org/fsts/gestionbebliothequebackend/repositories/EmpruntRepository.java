@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -61,5 +62,8 @@ public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
             "WHERE e.statut = 'RETARD'")
     Double findMoyenneTempsRetard();*/
 
-
+    @Query("SELECT e FROM Emprunt e WHERE e.dateRetour IS NULL " +
+            "AND :currentDate > e.dateEmprunt + 3 " +
+            "AND e.statut != 'RETOURNER'")
+    List<Emprunt> findAllEmprintEnRetard(LocalDate currentDate);
 }
