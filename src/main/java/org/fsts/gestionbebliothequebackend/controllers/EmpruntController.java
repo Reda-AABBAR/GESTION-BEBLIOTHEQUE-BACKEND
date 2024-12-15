@@ -1,6 +1,7 @@
 package org.fsts.gestionbebliothequebackend.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.RequiredArgsConstructor;
 import org.fsts.gestionbebliothequebackend.entities.Document;
 import org.fsts.gestionbebliothequebackend.entities.Emprunt;
 import org.fsts.gestionbebliothequebackend.entities.Utilisateur;
@@ -14,10 +15,10 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/emprunts")
+@RequiredArgsConstructor
 public class EmpruntController {
 
-    @Autowired
-    private EmpruntService empruntService;
+    private final EmpruntService empruntService;
 
     @PostMapping("/save")
     public ResponseEntity<Emprunt> saveEmprunt(@RequestParam UUID utilisateurId, @RequestParam Long documentId, @RequestBody Emprunt emprunt) {

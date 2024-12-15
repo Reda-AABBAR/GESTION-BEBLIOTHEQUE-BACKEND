@@ -63,7 +63,10 @@ public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
     Double findMoyenneTempsRetard();*/
 
     @Query("SELECT e FROM Emprunt e WHERE e.dateRetour IS NULL " +
-            "AND :currentDate > e.dateEmprunt + 3 " +
+            "AND e.dateEmprunt < :dateLimite " +
             "AND e.statut != 'RETOURNER'")
-    List<Emprunt> findAllEmprintEnRetard(LocalDate currentDate);
+    List<Emprunt> findAllEmprintEnRetard(@Param("dateLimite") LocalDate dateLimite);
+
+
+
 }
