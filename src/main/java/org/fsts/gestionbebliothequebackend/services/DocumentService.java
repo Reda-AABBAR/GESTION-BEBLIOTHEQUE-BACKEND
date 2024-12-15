@@ -20,7 +20,21 @@ public class DocumentService {
     private DocumentRepository documentRepository;
 
     public List<Document> findAllDocuments() {
-        return documentRepository.findAll();
+        List<Document> documents = documentRepository.findAll();
+
+        // Ajouter le préfixe à l'image lors de la récupération des documents
+        for (Document document : documents) {
+            if (document.getImg() != null) {
+                String base64Image = Base64.getEncoder().encodeToString(document.getImg());
+                base64Image = addPrefixToBase64Image(base64Image);
+                byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+
+                // Stocker l'image sous forme de tableau d'octets dans le champ @Lob (img)
+                document.setImg(imageBytes);
+            }
+        }
+
+        return documents;
     }
 
     public Optional<Document> findDocumentById(Long id) {
@@ -61,6 +75,13 @@ public class DocumentService {
         document.setNbrExemplaire(json.get("nbrExemplaire").asInt());
         if (json.has("img")) {
             String base64Image = json.get("img").asText();
+            if (base64Image.startsWith("data:image/png;base64,")) {
+                base64Image = base64Image.split(",")[1];
+                base64Image = base64Image.replaceAll("\\s", "");
+
+                // Supprimer les signes "=" à la fin de la chaîne base64
+                base64Image = base64Image.replaceAll("=+$", "");
+            }
             byte[] imageBytes = Base64.getDecoder().decode(base64Image);
             document.setImg(imageBytes);
         }
@@ -159,6 +180,13 @@ public class DocumentService {
         return documentRepository.findById(id);
     }
 
+    public String addPrefixToBase64Image(String base64Image) {
+        if (base64Image != null && !base64Image.startsWith("data:image/png;base64,")) {
+            // Ajouter le préfixe 'data:image/png;base64,' avant d'envoyer l'image
+            base64Image = "data:image/png;base64," + base64Image;
+        }
+        return base64Image;
+    }
 
 
     /*   public void saveFromExcel(MultipartFile file) throws Exception {
