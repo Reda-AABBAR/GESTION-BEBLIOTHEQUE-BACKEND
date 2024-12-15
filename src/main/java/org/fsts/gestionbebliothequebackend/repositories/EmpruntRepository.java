@@ -65,7 +65,8 @@ public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
     @Query("SELECT e FROM Emprunt e WHERE e.dateRetour IS NULL " +
             "AND e.dateEmprunt < :dateLimite " +
             "AND e.statut != 'RETOURNER'")
-    List<Emprunt> findAllEmprintEnRetard(@Param("dateLimite") LocalDate dateLimite);
+    List<Emprunt> findAllEmprintEnRetard(@Param("dateLimite") Date dateLimite);
+
 
 
 

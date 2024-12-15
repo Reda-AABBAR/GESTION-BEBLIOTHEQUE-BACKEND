@@ -279,7 +279,7 @@ public class EmpruntService {
 
 
     public List<Emprunt> getAllEmprintRetard(){
-        return empruntRepository.findAllEmprintEnRetard(LocalDate.now().minusDays(3));
+        return empruntRepository.findAllEmprintEnRetard(java.sql.Date.valueOf(LocalDate.now().minusDays(3)));
     }
 
 }
