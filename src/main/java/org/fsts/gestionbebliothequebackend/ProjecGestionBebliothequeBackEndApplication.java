@@ -49,8 +49,8 @@ public class ProjecGestionBebliothequeBackEndApplication {
                         .build();
                 if(repository.countByEmail("test@test.com")== 0)
                     repository.save(util);
-            Utilisateur utilisateur = repository.findByEmail("test@test.com").get();
-            Document document = documentRepository.findById(1L).get();
+            //Utilisateur utilisateur = repository.findByEmail("test@test.com").get();
+            //Document document = documentRepository.findById(1L).get();
 
             LocalDate now = LocalDate.now();
             Date dateEmprunt1 = Date.from(now.minusDays(5).atStartOfDay(ZoneId.systemDefault()).toInstant());
