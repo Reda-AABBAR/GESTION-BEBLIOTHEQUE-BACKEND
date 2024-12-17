@@ -32,8 +32,6 @@ public class ProjecGestionBebliothequeBackEndApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ProjecGestionBebliothequeBackEndApplication.class, args);
-        List <Document> documents = new ArrayList<>();
-        documents.stream().
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -56,7 +54,7 @@ public class ProjecGestionBebliothequeBackEndApplication {
             
         };
     }
-    @Bean
+    //@Bean
     public CommandLineRunner testSaveDocument(DocumentService documentService) {
         return args -> {
             ObjectMapper objectMapper = new ObjectMapper();
