@@ -134,6 +134,13 @@ public class DocumentService {
         //stocker l image
         if (json.has("img")) {
             String base64Image = json.get("img").asText();
+            if (base64Image.startsWith("data:image/png;base64,")) {
+                base64Image = base64Image.split(",")[1];
+                base64Image = base64Image.replaceAll("\\s", "");
+
+                // Supprimer les signes "=" à la fin de la chaîne base64
+                base64Image = base64Image.replaceAll("=+$", "");
+            }
             byte[] imageBytes = Base64.getDecoder().decode(base64Image);
             document.setImg(imageBytes);
         }

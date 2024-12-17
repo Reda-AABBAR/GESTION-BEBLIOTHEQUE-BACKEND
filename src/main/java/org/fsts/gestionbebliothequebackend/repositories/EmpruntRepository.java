@@ -67,6 +67,9 @@ public interface EmpruntRepository extends JpaRepository<Emprunt,Long> {
             "AND e.statut != 'RETOURNER'")
     List<Emprunt> findAllEmprintEnRetard(@Param("dateLimite") Date dateLimite);
 
+    @Query("SELECT e FROM Emprunt e WHERE FUNCTION('YEAR', e.dateEmprunt) = :year OR FUNCTION('YEAR', e.dateRetour) = :year")
+    List<Emprunt> findAllByYear(int year);
+
 
 
 

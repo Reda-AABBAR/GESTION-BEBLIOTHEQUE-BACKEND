@@ -3,7 +3,9 @@ package org.fsts.gestionbebliothequebackend.controllers;
 import org.fsts.gestionbebliothequebackend.entities.Emprunt;
 import org.fsts.gestionbebliothequebackend.services.EmpruntService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,5 +53,11 @@ public class StatisticController {
     @GetMapping("/emprunts/mpoyen_retard")
     public Float MoyenJoursRetard(){
         return empruntService.DureeMoyenDeRetard();
+    }
+
+    @GetMapping("/stats/{year}")
+    public ResponseEntity<Map<String, Map<String, Integer>>> getStatsByYear(@PathVariable int year) {
+        Map<String, Map<String, Integer>> stats = empruntService.getStatsByMonth(year);
+        return ResponseEntity.ok(stats);
     }
 }
