@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -282,4 +283,61 @@ public class EmpruntService {
         return empruntRepository.findAllEmprintEnRetard(java.sql.Date.valueOf(LocalDate.now().minusDays(3)));
     }
 
+    public Map<String, Map<String, Integer>> getStatsByMonth(int year) {
+        List<Emprunt> emprunts = empruntRepository.findAllByYear(year);
+
+        // Initialiser les structures pour compter les livres
+        Map<Integer, Integer> empruntCount = new HashMap<>();
+        Map<Integer, Integer> retourCount = new HashMap<>();
+
+        // Parcourir tous les emprunts
+        for (Emprunt emprunt : emprunts) {
+            // Compter les emprunts par mois
+            if (emprunt.getDateEmprunt() != null) {
+                int month = convertToLocalDate(emprunt.getDateEmprunt()).getMonthValue();
+                empruntCount.put(month, empruntCount.getOrDefault(month, 0) + 1);
+            }
+
+            // Compter les retours par mois
+            if (emprunt.getDateRetour() != null) {
+                int month = convertToLocalDate(emprunt.getDateRetour()).getMonthValue();
+                retourCount.put(month, retourCount.getOrDefault(month, 0) + 1);
+            }
+        }
+
+        // Convertir les résultats en une structure lisible
+        Map<String, Map<String, Integer>> result = new LinkedHashMap<>();
+        for (int month = 1; month <= 12; month++) {
+            Map<String, Integer> monthStats = new HashMap<>();
+            monthStats.put("empruntés", empruntCount.getOrDefault(month, 0));
+            monthStats.put("retournés", retourCount.getOrDefault(month, 0));
+            result.put(getMonthName(month), monthStats);
+        }
+
+        return result;
+    }
+
+    // Convertir Date en LocalDate
+    private LocalDate convertToLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    // Obtenir le nom des mois
+    private String getMonthName(int month) {
+        return switch (month) {
+            case 1 -> "Janvier";
+            case 2 -> "Février";
+            case 3 -> "Mars";
+            case 4 -> "Avril";
+            case 5 -> "Mai";
+            case 6 -> "Juin";
+            case 7 -> "Juillet";
+            case 8 -> "Août";
+            case 9 -> "Septembre";
+            case 10 -> "Octobre";
+            case 11 -> "Novembre";
+            case 12 -> "Décembre";
+            default -> "Inconnu";
+        };
+    }
 }

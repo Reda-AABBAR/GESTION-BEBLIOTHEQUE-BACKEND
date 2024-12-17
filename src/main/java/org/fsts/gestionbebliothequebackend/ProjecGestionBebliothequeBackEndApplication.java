@@ -22,7 +22,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @SpringBootApplication
 @EnableConfigurationProperties({RsaKeyConfig.class})
@@ -30,6 +32,8 @@ public class ProjecGestionBebliothequeBackEndApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ProjecGestionBebliothequeBackEndApplication.class, args);
+        List <Document> documents = new ArrayList<>();
+        documents.stream().
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
