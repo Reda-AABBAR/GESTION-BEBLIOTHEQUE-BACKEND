@@ -40,6 +40,7 @@ public class Utilisateur {
     )
     protected List<Notification> notifications;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "utilisateur")
     List<Penalite> Penalites;
 }
