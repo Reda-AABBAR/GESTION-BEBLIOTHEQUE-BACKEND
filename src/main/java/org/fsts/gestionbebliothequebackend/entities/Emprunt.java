@@ -51,17 +51,15 @@ public class Emprunt {
 
         // Convertir `dateEmprunt` en LocalDate pour les calculs
         LocalDate dateEmpruntLocal = dateEmprunt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate dateRetourLocal = dateRetour.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
         // Définir la limite d'emprunt (3 jours après la date d'emprunt)
         LocalDate dateLimite = dateEmpruntLocal.plusDays(3);
 
-        // Obtenir la date actuelle
-        LocalDate dateActuelle = LocalDate.now();
-
         // Vérifier si la date actuelle dépasse la date limite
-        if (dateActuelle.isAfter(dateLimite)) {
+        if (dateRetourLocal.isAfter(dateLimite)) {
             // Calculer et retourner le nombre de jours de retard
-            return (int) ChronoUnit.DAYS.between(dateLimite, dateActuelle);
+            return (int) ChronoUnit.DAYS.between(dateLimite, dateRetourLocal);
         }
 
         // Pas de retard

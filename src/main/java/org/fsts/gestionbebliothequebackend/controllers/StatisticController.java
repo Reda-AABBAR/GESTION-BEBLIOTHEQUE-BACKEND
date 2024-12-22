@@ -51,7 +51,7 @@ public class StatisticController {
 
     //jours moyen de retard
     @GetMapping("/emprunts/mpoyen_retard")
-    public Float MoyenJoursRetard(){
+    public Double MoyenJoursRetard(){
         return empruntService.DureeMoyenDeRetard();
     }
 
