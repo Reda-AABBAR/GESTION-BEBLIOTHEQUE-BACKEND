@@ -276,17 +276,24 @@ public class EmpruntService {
         ));
     }
 
-    /*public Double getMoyenneTempsRetard() {
-        return empruntRepository.findMoyenneTempsRetard();
-    }*/
-
+    public static List<Emprunt> getEmpruntsDeLAnnee(List<Emprunt> emprunts, int annee) {
+        return emprunts.stream()
+                .filter(emprunt -> {
+                    LocalDate dateEmprunt = emprunt.getDateEmprunt().toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate();
+                    return dateEmprunt.getYear() == annee;
+                })
+                .collect(Collectors.toList());
+    }
 
     public List<Emprunt> getAllEmprintRetard(){
         return empruntRepository.findAllEmprintEnRetard(java.sql.Date.valueOf(LocalDate.now().minusDays(3)));
     }
 
     public Map<String, Map<String, Integer>> getStatsByMonth(int year) {
-        List<Emprunt> emprunts = empruntRepository.findAllByYear(year);
+        List<Emprunt> empruntswithoutyear = empruntRepository.findAllByYear(year);
+        List<Emprunt> emprunts = getEmpruntsDeLAnnee(empruntswithoutyear,year);
 
         // Initialiser les structures pour compter les livres
         Map<Integer, Integer> empruntCount = new HashMap<>();
