@@ -146,7 +146,7 @@ public class EmpruntService {
 
     public List<Emprunt> getEmpruntsWithDelay() {
 
-        List<Emprunt> allEmprunts = empruntRepository.findByDocumentStatut(Document.Statut.EXIST);
+        List<Emprunt> allEmprunts = empruntRepository.findAll();
 
         List<Emprunt> overdueEmprunts = new ArrayList<>();
 
@@ -154,7 +154,7 @@ public class EmpruntService {
             if (emprunt.getDateRetour() != null) {
                 // calculer la date
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(emprunt.getDateRetour());
+                calendar.setTime(emprunt.getDateEmprunt());
                 calendar.add(Calendar.DAY_OF_MONTH, 3); // ajouter 3 jours
                 Date dateLimite = calendar.getTime();
 
@@ -257,13 +257,15 @@ public class EmpruntService {
         return true;
     }
 
-    public Float DureeMoyenDeRetard(){
+    public Double DureeMoyenDeRetard(){
         List<Emprunt> empruntsretarde = getEmpruntsWithDelay();
         int joursretarstotal = 0;
         for(Emprunt emprunt : empruntsretarde){
             joursretarstotal += emprunt.getJoursRetard();
         }
-        Float moyen = (joursretarstotal * 1.0f) / empruntsretarde.size();
+        if(empruntsretarde.size() == 0 ) return 0.0;
+        Double moyen = (joursretarstotal * 1.0) / empruntsretarde.size();
+        System.out.println(moyen);
         return moyen;
     }
     public Map<Integer, Long> getNombreRetoursParMois() {
@@ -274,17 +276,24 @@ public class EmpruntService {
         ));
     }
 
-    /*public Double getMoyenneTempsRetard() {
-        return empruntRepository.findMoyenneTempsRetard();
-    }*/
-
+    public static List<Emprunt> getEmpruntsDeLAnnee(List<Emprunt> emprunts, int annee) {
+        return emprunts.stream()
+                .filter(emprunt -> {
+                    LocalDate dateEmprunt = emprunt.getDateEmprunt().toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate();
+                    return dateEmprunt.getYear() == annee;
+                })
+                .collect(Collectors.toList());
+    }
 
     public List<Emprunt> getAllEmprintRetard(){
         return empruntRepository.findAllEmprintEnRetard(java.sql.Date.valueOf(LocalDate.now().minusDays(3)));
     }
 
     public Map<String, Map<String, Integer>> getStatsByMonth(int year) {
-        List<Emprunt> emprunts = empruntRepository.findAllByYear(year);
+        List<Emprunt> empruntswithoutyear = empruntRepository.findAllByYear(year);
+        List<Emprunt> emprunts = getEmpruntsDeLAnnee(empruntswithoutyear,year);
 
         // Initialiser les structures pour compter les livres
         Map<Integer, Integer> empruntCount = new HashMap<>();
