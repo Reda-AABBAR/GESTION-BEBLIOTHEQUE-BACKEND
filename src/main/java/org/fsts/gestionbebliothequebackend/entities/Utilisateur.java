@@ -29,7 +29,7 @@ public class Utilisateur {
     protected String code;
     protected UtilisateurRole role;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     protected Photo photo;
 
     @ManyToMany
